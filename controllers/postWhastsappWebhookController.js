@@ -1,5 +1,5 @@
 import axios from "axios";
-//import { WhatsAppMessageQueue } from "../utils/queue/whatsAppQueue.js";
+import { WhatsAppMessageQueue } from "../utils/queue/whatsAppQueue.js";
 //import { WhatsAppFlowMessageQueue } from "../utils/queue/whatsAppFlowQueue.js";
 
 // Define a new instance of MessageQueue
