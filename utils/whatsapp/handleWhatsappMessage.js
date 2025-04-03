@@ -1,11 +1,13 @@
 import axios from "axios";
-import { saveMessageInDb } from "../dataBase/saveMessageInDb.js";
+import dotenv from "dotenv"
 
+dotenv.config()
 const whatsappToken = process.env.WHATSAPP_TOKEN;
 const myPhoneNumberId = process.env.WHATSAPP_PHONE_ID;
 
 // Function that sends message to the user
 export const handleWhatsappMessage = async (senderId, message) => {
+	//console.log("token:",whatsappToken)
 	try {
 
 		// Posts the message to Whatsapp
@@ -33,6 +35,7 @@ export const handleWhatsappMessage = async (senderId, message) => {
 					error.response ? error.response.data : error.message
 				);
 			});
+			console.log("envie el mensaje", response.data)
 	} catch (error) {
 		console.log("Error en handleWhatsappMessage.js", error.response ? error.response.data : error.message);
 		

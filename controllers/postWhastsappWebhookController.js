@@ -3,13 +3,13 @@ import { WhatsAppMessageQueue } from "../utils/queue/whatsAppQueue.js";
 //import { WhatsAppFlowMessageQueue } from "../utils/queue/whatsAppFlowQueue.js";
 
 // Define a new instance of MessageQueue
-//const whatsAppQueue = new WhatsAppMessageQueue();
+const whatsAppQueue = new WhatsAppMessageQueue();
 //const whatsAppFlowQueue = new WhatsAppFlowMessageQueue();
 
 // Function that distributes to each Queue depending on its type
 export const postWhatsappWebhookController = async (req, res) => {
 	const body = req.body;
-	console.log("Messages-->", body.entry[0].changes[0].value.messages[0]);
+	console.log("Messages->", body.entry[0].changes[0].value.messages[0]);
 	const type = body?.entry[0]?.changes[0]?.value?.messages[0]?.type;
 	console.log("body:", body)
 	let audioId;
@@ -76,11 +76,14 @@ export const postWhatsappWebhookController = async (req, res) => {
 			console.log("Objeto userMessage que entra a la fila:", userMessage)
 
 			// Distribution to different Queues
-			/* if (type === "interactive") {
-				whatsAppFlowQueue.enqueueMessage(userMessage);
+			if (type === "interactive") {
+				//whatsAppFlowQueue.enqueueMessage(userMessage);
+				console.log("entré a la fila de flows")
+
 			} else {
+				console.log("entré a la fila de whatsApp")
 				whatsAppQueue.enqueueMessage(userMessage);
-			} */
+			}
 		}
 	} else {
 		console.log("Object send by WhatsApp not processed by this API", body);

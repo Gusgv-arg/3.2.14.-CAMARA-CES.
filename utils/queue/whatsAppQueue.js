@@ -1,13 +1,13 @@
 import { convertBufferImageToUrl } from "../media/convertBufferImageToUrl.js";
 import { downloadWhatsAppMedia } from "../media/downloadWhatsAppMedia.js";
-//import { errorMessage1 } from "../errors/errorMessages.js";
+import { errorMessage1 } from "../errors/errorMessages.js";
 import { getMediaWhatsappUrl } from "../media/getMediaWhatsappUrl.js";
 import { handleWhatsappMessage } from "../whatsapp/handleWhatsappMessage.js";
 //import { processMessageWithAssistant } from "../ai/processMessageWithAssistant.js";
 //import { saveMessageInDb } from "../dataBase/saveMessageInDb.js";
 //import { leadTemplateWabNotification } from "../notifications/leadTemplateWabNotification.js";
 //import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
-//import { processWhatsAppWithApi } from "../whatsapp/processWhatsAppWithApi.js";
+import { processWhatsAppWithApi } from "../whatsapp/processWhatsAppWithApi.js";
 
 const myPhone = process.env.MY_PHONE;
 
