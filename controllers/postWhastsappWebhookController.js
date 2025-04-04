@@ -1,10 +1,10 @@
 import axios from "axios";
 import { WhatsAppMessageQueue } from "../utils/queue/whatsAppQueue.js";
-//import { WhatsAppFlowMessageQueue } from "../utils/queue/whatsAppFlowQueue.js";
+import { WhatsAppFlowMessageQueue } from "../utils/queue/whatsAppFlowQueue.js";
 
 // Define a new instance of MessageQueue
 const whatsAppQueue = new WhatsAppMessageQueue();
-//const whatsAppFlowQueue = new WhatsAppFlowMessageQueue();
+const whatsAppFlowQueue = new WhatsAppFlowMessageQueue();
 
 // Function that distributes to each Queue depending on its type
 export const postWhatsappWebhookController = async (req, res) => {
@@ -77,7 +77,7 @@ export const postWhatsappWebhookController = async (req, res) => {
 
 			// Distribution to different Queues
 			if (type === "interactive") {
-				//whatsAppFlowQueue.enqueueMessage(userMessage);
+				whatsAppFlowQueue.enqueueMessage(userMessage);
 				console.log("entré a la fila de flows")
 
 			} else {

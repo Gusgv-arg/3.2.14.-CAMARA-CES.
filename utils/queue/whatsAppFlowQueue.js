@@ -1,4 +1,3 @@
-import { saveMessageInDb } from "../dataBase/saveMessageInDb.js";
 import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
 import { processWhatsAppFlowWithApi } from "../whatsapp/processWhatsAppFlowWithApi.js";
 import { errorMessage1 } from "../errors/errorMessages.js";

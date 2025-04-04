@@ -1,5 +1,5 @@
 import axios from "axios";
-//import { adminWhatsAppNotification } from "../utils/notifications/adminWhatsAppNotification.js";
+import { adminWhatsAppNotification } from "../utils/notifications/adminWhatsAppNotification.js";
 
 import { searchFlow_1Structure } from "./searchFlow_1Structure.js";
 
@@ -45,13 +45,13 @@ export const sendFlow_1ToAdmin = async (userMessage) => {
 		: error.message
 
 		console.error(
-			`Error en sendFlow_1ToLead.js:`,
+			`Error en sendFlow_1ToAdmin.js:`,
 			errorMessage
 		);
 
 		// Handle the Error		
 		// Notify Error to the Admin
-		const message = `🔔 *NOTIFICACION DE ERROR en sendFlow_1ToLead.js:* Hubo un error al enviar el Flow 1 al cliente ${userMessage.name} con celular ${userMessage.userPhone}.\nError: ${errorMessage}`;
-		//await adminWhatsAppNotification(adminPhone, message);
+		const message = `🔔 *NOTIFICACION DE ERROR en sendFlow_1ToAdmin.js:* Hubo un error al enviar el Flow 1 al cliente ${userMessage.name} con celular ${userMessage.userPhone}.\nError: ${errorMessage}`;
+		await adminWhatsAppNotification(adminPhone, message);
 	}
 };
