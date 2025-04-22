@@ -16,7 +16,7 @@ export const processWhatsAppWithApi = async (userMessage) => {
 			if (userMessage.userPhone === adminPhone){
 				console.log("detecte el admin phone")
 				// Avizar al Admin que entre en su celular
-				message = `🔔 *Notificación:*\n\n👋 Hola Administrador, por favor entre en su celular para ver el Menú de opciones disponibles.\n\n*Cámara de Concesionarios Stellantis*`
+				message = `🔔 *Notificación:*\n\n¡👋 Hola Administrador! Por favor entre en su celular para ver el Menú de opciones disponibles.\n\n*Cámara de Concesionarios Stellantis*`
 				
 				await handleWhatsappMessage(userMessage.userPhone, message)
 
@@ -33,9 +33,10 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				// Buscar en la Base de Concesionarios
 				
 				// Si el teléfono se encuentra se envía el Flow del Concesionario
-				
+				message = `🔔 *Notificación:*\n\nEstimado ${userMessage.name}, por favor entre en su celular para ver el Menú de Opciones.\n\n*Cámara de Concesionarios Stellantis*`
+
 				// Si el teléfono no está en la Base se notifica que no puede entrar
-				message = `🔔 *Notificación:*\n\nEstimado ${userMessage.name}, su teléfono no se encuentra en la Base de Datos. Si considera utilizarlo, por favor solicite a alguien autorizado del Concesionario al que pertenece para darlo de alta. Muchas gracias.\n\n*Cámara de Concesionarios Stellantis*`
+				message = `🔔 *Notificación:*\n\nEstimado ${userMessage.name}, su teléfono no se encuentra en la Base de Datos. Si considera que debe utilizar este servicio, por favor solicite a alguien autorizado del Concesionario al que pertenece para darlo de alta. Muchas gracias.\n\n*Cámara de Concesionarios Stellantis*`
 
 				await handleWhatsappMessage(userMessage.userPhone, message)
 
@@ -43,6 +44,8 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				const adminMessage = `🔔 *Notificación:*\n\nEl usuario ${userMessage.name} con celular ${userMessage.userPhone}, quizo usar el Servicio y no está en la Base de Datos.\n\n*Cámara de Concesionarios Stellantis*`
 				
 				await adminWhatsAppNotification(adminPhone, adminMessage)
+
+				log = `1-Se envió el mensaje al usuario ${userMessage.name} con celular ${userMessage.userPhone} de que no está dado de alta en la base.`	
 			}
 
 

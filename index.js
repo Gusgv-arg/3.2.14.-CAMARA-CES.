@@ -8,14 +8,14 @@ import whatsappRouter from "./routers/whatsappRouter.js";
 
 dotenv.config();
 
-/* mongoose
+mongoose
 	.connect(process.env.MONGODB_URI)
 	.then(() => {
-		console.log("Connected to DEALERS data base");
+		console.log("Connected to Database:", mongoose.connection.db.databaseName);
 	})
 	.catch((err) => {
 		console.log(err.message);
-	}); */
+	});
 
 const app = express();
 
