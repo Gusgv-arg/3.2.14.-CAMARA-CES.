@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 // Configure dotenv with absolute path
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-const MONGODB_URI = "mongodb+srv://gusgvillafane:iIqhBczpSXe0jEew@cluster0.qw2vgeb.mongodb.net/Cámara?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI 
 
 async function createDealerDb() {
     try {
