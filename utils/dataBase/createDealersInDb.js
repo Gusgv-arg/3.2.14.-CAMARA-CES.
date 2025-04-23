@@ -80,7 +80,7 @@ async function createDealerDb() {
 }
 
 // Execute
-createDealerDb().catch(err => {
+/* createDealerDb().catch(err => {
     console.error("Fatal Error:", err);
     process.exit(1);
-});
+}); */

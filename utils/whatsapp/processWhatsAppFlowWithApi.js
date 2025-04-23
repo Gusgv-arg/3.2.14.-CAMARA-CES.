@@ -1,6 +1,7 @@
 import axios from "axios";
 import { handleWhatsappMessage } from "../whatsapp/handleWhatsappMessage.js";
 import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const processWhatsAppFlowWithApi = async (userMessage) => {
 	const type = userMessage.type;
@@ -8,20 +9,20 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 
 	try {
 		if (type === "interactive") {
-			// ---- TOKEN 1 -------------------------------------//
+			// ---- TOKEN 1: ADMIN -------------------------------------//
 			if (userMessage.message.includes('"flow_token":"1"')) {
 				if (userMessage.message.includes('"Base_Concesionarios_en_Excel"')) {
 					console.log("entre al 2 if");
-					const message = `🔔 *Notificación:*\n\nEn breve recibirá un Excel con todos los Concesionarios.\n\n*Cámara de Concesionarios Stellantis*`;
+					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios.\n\n*Cámara de Concesionarios Stellantis*`;
 
-					// Notifica al Admin con la opción elegida
 					await adminWhatsAppNotification(userMessage.userPhone, message);
-					// Llama a la función que genera el Excel
 
+					// Llama a la función que genera el Excel
+					
 					// Envía el Excel al Admin
 
 					log =
-						"1. Se notificó al Admin que recibirá un Excel con los concesionarios. 2. Se le envió el Excel por WhatsApp.";
+						`Se envió al Admin ${userMessage.name}: ${userMessage.userPhone} que recibirá un Excel con los concesionarios.`;
 
 				} else if (userMessage.message.includes('"Envio_de_Comunicacion"')) {
 					const message = `🔔 *Notificación:*\n\nPor favor entre en su celular para completar el proceso de envío de una Comunicación.\n\n*Cámara de Concesionarios Stellantis*`;
@@ -32,8 +33,8 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 					// Envía el Flow de Comunicación
 
 					log =
-						"1. Se notificó al Admin que recibirá el Flow de Comunicación. 2. Se le envió el Flow de Comunicación por WhatsApp.";
-						
+						`Envío Flow de Comunicación a Admin ${userMessage.name}: ${userMessage.userPhone}.`;
+
 				} else if (userMessage.message.includes('"Envio_de_Encuesta"')) {
 					const message = `🔔 *Notificación:*\n\nPor favor entre en su celular para completar el proceso de envío de Encuesta.\n\n*Cámara de Concesionarios Stellantis*`;
 
@@ -42,14 +43,61 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 
 					// Envía el Flow de Encuesta
 					log =
-						"1. Se notificó al Admin que recibirá el Flow de Encuesta. 2. Se le envió el Flow de Encuesta por WhatsApp.";
+						`Envío al Admin ${userMessage.name}: ${userMessage.userPhone} el Flow de Encuesta.`;	
 				}
 
 				return log;
-			} else if (/\"flow_token\":\"2/.test(userMessage.message)) {
-				// ---- TOKEN 2 -------------------------------------//
+			} else if (userMessage.message.includes('"flow_token":"2"')) {
+				// ---- TOKEN 2: CONCESIONARIO -------------------------------//
+				if (
+					userMessage.message.includes('"Opciones":"Alta_de_Concesionario"')
+				) {
+					console.log("entró Menú de Ce. opción Alta de concesionario");
 
-				log = `1-`;
+					// Se genera un token para diferenciar el flow
+					const flowToken = `2${uuidv4()}`;
+
+					// Se envía el Flow de Alta de Concesionario
+
+					log = `El usuario ${userMessage.name}: ${userMessage.userPhone} recibió el Flow de Alta de Concesionario. Token: ${flowToken}`;
+				
+				} else if (
+					userMessage.message.includes('"Opciones":"Modificacion_de_Datos"')
+				) {
+					console.log("entró Menú de Ce. opción Modificacion_de_Datos");
+
+					// Se genera un token para diferenciar el flow
+					const flowToken = `2${uuidv4()}`;
+
+					// Se envía el Flow de Modificación de Datos
+
+					log = `El usuario ${userMessage.name}: ${userMessage.userPhone} recibió el Flow de "Modificacion_de_Datos". Token: ${flowToken}`;
+				
+				} else if (
+					userMessage.message.includes('"Opciones":"Acceder_a_Documentos"')
+				) {
+					console.log("entró Menú de Ce. opción Acceder_a_Documentos");
+
+					// Se genera un token para diferenciar el flow
+					const flowToken = `2${uuidv4()}`;
+
+					// Se envía el Flow de "Acceder_a_Documentos"
+
+					log = `El usuario ${userMessage.name}: ${userMessage.userPhone} recibió el Flow de "Acceder_a_Documentos". Token: ${flowToken}`;
+				
+				} else if (
+					userMessage.message.includes('"Opciones":"Envio_de_Propuestas"')
+				) {
+					console.log("entró Menú de Ce. opción Envio_de_Propuestas");
+
+					// Se genera un token para diferenciar el flow
+					const flowToken = `2${uuidv4()}`;
+
+					// Se envía el Flow de "Envio_de_Propuestas"
+
+					log = `El usuario ${userMessage.name}: ${userMessage.userPhone} recibió el Flow de "Envio_de_Propuestas". Token: ${flowToken}`;
+				}
+			return log
 			}
 		}
 	} catch (error) {

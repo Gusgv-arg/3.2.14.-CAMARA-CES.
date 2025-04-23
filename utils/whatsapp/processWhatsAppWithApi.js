@@ -1,7 +1,9 @@
 import { sendFlow_1ToAdmin } from "../../flows/sendFlow_1ToAdmin.js";
 import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
 import { handleWhatsappMessage } from "./handleWhatsappMessage.js";
+import Dealers from "../../models/dealers.js";
 import dotenv from "dotenv"
+import { sendFlow_2ToDealer } from "../../flows/sendFlow_2ToDealer.js";
 
 dotenv.config();
 const adminPhone = process.env.ADMIN_PHONE;
@@ -16,7 +18,7 @@ export const processWhatsAppWithApi = async (userMessage) => {
 			if (userMessage.userPhone === adminPhone){
 				console.log("detecte el admin phone")
 				// Avizar al Admin que entre en su celular
-				message = `🔔 *Notificación:*\n\n¡👋 Hola Administrador! Por favor entre en su celular para ver el Menú de opciones disponibles.\n\n*Cámara de Concesionarios Stellantis*`
+				message = `🔔 *Notificación:*\n\n¡👋 Hola Administrador! ☰ Por favor entre en su celular para ver el Menú de Opciones.\n\n*Cámara de Concesionarios Stellantis*`
 				
 				await handleWhatsappMessage(userMessage.userPhone, message)
 
@@ -28,24 +30,43 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				log = `1-Se envió el Flow1 al Administrador.`;
 
 			} else {
-				// NO es el ADMIN
+				// NO es el ADMIN, busca en la Base de Concesionarios
+				const dealer = await Dealers.findOne({
+					isActive: true,
+					'employees': {
+						$elemMatch: {
+							phone: userMessage.userPhone,
+							isActive: true
+						}
+					}
+				});
+
+				if (dealer) {
+					// Si está OK se envía el Flow del Concesionario
+					message = `🔔 *Notificación:*\n\n☰ Estimado ${userMessage.name}, por favor entre en su celular para ver el Menú de Opciones de Concesionarios.\n\n*Cámara de Concesionarios Stellantis*`
+					
+					await handleWhatsappMessage(userMessage.userPhone, message)
+
+					// Envío Flow de Concesionario
+					await sendFlow_2ToDealer(userMessage);
 				
-				// Buscar en la Base de Concesionarios
+					log = `1-Se envió el Flow de Concesionario al usuario ${userMessage.name} con celular ${userMessage.userPhone}.`
 				
-				// Si el teléfono se encuentra se envía el Flow del Concesionario
-				message = `🔔 *Notificación:*\n\nEstimado ${userMessage.name}, por favor entre en su celular para ver el Menú de Opciones.\n\n*Cámara de Concesionarios Stellantis*`
+				} else {
+					// Si NO esta ok se notifica que no puede entrar
+					message = `🔔 *Notificación:*\n\n❗ Estimado ${userMessage.name}, su teléfono no se encuentra en la Base de Datos. Si considera que debe utilizar este servicio, por favor solicite a alguien autorizado del Concesionario al que pertenece para darlo de alta. Muchas gracias.\n\n*Cámara de Concesionarios Stellantis*`
 
-				// Si el teléfono no está en la Base se notifica que no puede entrar
-				message = `🔔 *Notificación:*\n\nEstimado ${userMessage.name}, su teléfono no se encuentra en la Base de Datos. Si considera que debe utilizar este servicio, por favor solicite a alguien autorizado del Concesionario al que pertenece para darlo de alta. Muchas gracias.\n\n*Cámara de Concesionarios Stellantis*`
+					await handleWhatsappMessage(userMessage.userPhone, message)
+	
+					// Se le da aviso al Admin de que alguien no está dado de alta.
+					const adminMessage = `🔔 *Notificación:*\n\nEl usuario ${userMessage.name} con celular ${userMessage.userPhone}, quizo usar el Servicio y no está en la Base de Datos.\n\n*Cámara de Concesionarios Stellantis*`
+					
+					await adminWhatsAppNotification(adminPhone, adminMessage)
+	
+					log = `1-Se envió el mensaje al usuario ${userMessage.name} con celular ${userMessage.userPhone} de que no está dado de alta en la base.`	
+				}
 
-				await handleWhatsappMessage(userMessage.userPhone, message)
 
-				// Se le da aviso al Admin de que alguien no está dado de alta.
-				const adminMessage = `🔔 *Notificación:*\n\nEl usuario ${userMessage.name} con celular ${userMessage.userPhone}, quizo usar el Servicio y no está en la Base de Datos.\n\n*Cámara de Concesionarios Stellantis*`
-				
-				await adminWhatsAppNotification(adminPhone, adminMessage)
-
-				log = `1-Se envió el mensaje al usuario ${userMessage.name} con celular ${userMessage.userPhone} de que no está dado de alta en la base.`	
 			}
 
 
