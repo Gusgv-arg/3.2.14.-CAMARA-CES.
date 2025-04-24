@@ -6,20 +6,54 @@ import axios from "axios"; // Importar axios
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 export const exportDealersToExcelTemplate = async (dealers) => {
     try {
-        const leadsTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.10.MEGAMOTO-Campania-WhatsApp/main/public/temp/PlantillaLeads.xlsx";
-        const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla-Base-Redes.xlsx";
+        const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla_Base_Redes.xlsx";
         
         // Cargar la plantilla de Excel usando axios
         const response = await axios.get(excelTemplate, { responseType: 'arraybuffer' });
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(response.data);
-        const worksheet = workbook.getWorksheet(1); // Obtener la primera hoja de la plantilla
 
-        // Agregar los datos
-        
+        // Obtener las hojas
+        const dealersSheet = workbook.getWorksheet('Concesionarios');
+        const employeesSheet = workbook.getWorksheet('Personal');
+
+        // Procesar datos de concesionarios
+        let dealerRow = 2; // Comenzar desde la fila 2
+        dealers.forEach(dealer => {
+            if (dealer.isActive) {
+                dealersSheet.getCell(`A${dealerRow}`).value = dealer.brand;
+                dealersSheet.getCell(`B${dealerRow}`).value = dealer.name;
+                dealersSheet.getCell(`C${dealerRow}`).value = dealer.code;
+                dealersSheet.getCell(`D${dealerRow}`).value = dealer.province;
+                dealersSheet.getCell(`E${dealerRow}`).value = dealer.address;
+                dealersSheet.getCell(`F${dealerRow}`).value = dealer.cuit;
+                dealerRow++;
+            }
+        });
+
+        // Procesar datos de empleados
+        let employeeRow = 2; // Comenzar desde la fila 2
+        dealers.forEach(dealer => {
+            if (dealer.isActive && dealer.employees) {
+                dealer.employees.forEach(employee => {
+                    if (employee.isActive) {
+                        // Datos del concesionario
+                        employeesSheet.getCell(`A${employeeRow}`).value = dealer.name;
+                        employeesSheet.getCell(`B${employeeRow}`).value = dealer.code;
+                        
+                        // Datos del empleado
+                        employeesSheet.getCell(`C${employeeRow}`).value = employee.empName;
+                        employeesSheet.getCell(`D${employeeRow}`).value = employee.phone;
+                        employeesSheet.getCell(`E${employeeRow}`).value = employee.mail;
+                        employeesSheet.getCell(`F${employeeRow}`).value = employee.profile;
+                        
+                        employeeRow++;
+                    }
+                });
+            }
+        });
 
         // Generar nombre para el archivo
         const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -35,11 +69,10 @@ export const exportDealersToExcelTemplate = async (dealers) => {
 
     } catch (error) {
         const errorMessage = error?.response?.data
-        ? JSON.stringify(error.response.data)
-        : error.message
+            ? JSON.stringify(error.response.data)
+            : error.message
         
         console.error("Error en exportDealersToExcelTemplate.js:", errorMessage);
-
         throw errorMessage;
     }
 };

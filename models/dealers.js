@@ -26,9 +26,9 @@ const documentSchema = new mongoose.Schema({
 
 const employeeSchema = new mongoose.Schema({
 	empName: String,
-	empCategory: [
+	profile: 
 		{
-			empType: String,
+			type: String,
 			enum: [
 				"Accionista",
 				"General",
@@ -38,8 +38,7 @@ const employeeSchema = new mongoose.Schema({
 				"Administración",
 				"Calidad",
 			],
-		},
-	],
+		},	
 	phone: String,
 	mail: String,
 	isActive: Boolean,

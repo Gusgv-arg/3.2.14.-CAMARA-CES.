@@ -39,8 +39,8 @@ async function createDealerDb() {
                 cuit: dealers[0].cuit,
                 isActive: dealers[0].isActive,
                 employees: dealers[0].employees.map(emp => ({
-                    name: emp.name,
-                    category: emp.category,
+                    empName: emp.empName,
+                    profile: emp.profile,
                     phone: emp.phone.toString(),
                     mail: emp.mail,
                     isActive: emp.isActive,

@@ -9,8 +9,8 @@ export const dealers = [
 		isActive: true,
 		employees: [
 			{
-				name: "Prueba",
-				category: "Accionista", 
+				empName: "Prueba",
+				profile: "Accionista", 
 				phone: 5491161405589,
 				mail: "gusgvillafane@gmail.com",
 				isActive: true,
