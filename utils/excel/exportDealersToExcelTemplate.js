@@ -9,8 +9,8 @@ const __dirname = path.dirname(__filename);
 
 export const exportDealersToExcelTemplate = async (dealers) => {
     try {
-        //const leadsTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.10.MEGAMOTO-Campania-WhatsApp/main/public/temp/PlantillaLeads.xlsx";
-        const excelTemplate = "";
+        const leadsTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.10.MEGAMOTO-Campania-WhatsApp/main/public/temp/PlantillaLeads.xlsx";
+        const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla-Base-Redes.xlsx";
         
         // Cargar la plantilla de Excel usando axios
         const response = await axios.get(excelTemplate, { responseType: 'arraybuffer' });
