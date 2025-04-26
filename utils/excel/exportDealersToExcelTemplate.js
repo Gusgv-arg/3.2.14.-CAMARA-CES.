@@ -68,7 +68,7 @@ export const exportDealersToExcelTemplate = async () => {
         await workbook.xlsx.writeFile(outputPath);
         
         // Generar y retornar la URL pública
-        const fileUrl = `https://three-2-10-megamoto-campania-whatsapp.onrender.com/public/${fileName}`;
+        const fileUrl = `https://three-2-14-camara-ces.onrender.com/public/${fileName}`;
         return fileUrl;
 
     } catch (error) {
