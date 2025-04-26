@@ -1,13 +1,17 @@
 import ExcelJS from "exceljs";
 import path from "path";
 import { fileURLToPath } from "url";
-import axios from "axios"; // Importar axios
+import axios from "axios";
+import Dealers from "../../models/dealers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const exportDealersToExcelTemplate = async (dealers) => {
+export const exportDealersToExcelTemplate = async () => {
     try {
+        // Obtener todos los dealers de la base de datos
+        const dealers = await Dealers.find({});
+        
         const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla_Base_Redes.xlsx";
         
         // Cargar la plantilla de Excel usando axios

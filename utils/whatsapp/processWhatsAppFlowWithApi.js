@@ -2,6 +2,8 @@ import axios from "axios";
 import { handleWhatsappMessage } from "../whatsapp/handleWhatsappMessage.js";
 import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
 import { v4 as uuidv4 } from "uuid";
+import { exportDealersToExcelTemplate } from "../excel/exportDealersToExcelTemplate.js";
+import { sendExcelByWhatsApp } from "../excel/sendExcelByWhatsApp.js";
 
 export const processWhatsAppFlowWithApi = async (userMessage) => {
 	const type = userMessage.type;
@@ -12,17 +14,20 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 			// ---- TOKEN 1: ADMIN -------------------------------------//
 			if (userMessage.message.includes('"flow_token":"1"')) {
 				if (userMessage.message.includes('"Base_Concesionarios_en_Excel"')) {
-					console.log("entre al 2 if");
-					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios.\n\n*Cámara de Concesionarios Stellantis*`;
+					console.log("entre al if de Base_Concesionarios_en_Excel");
+
+					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios Activos.\n\n*Cámara de Concesionarios Stellantis*`;
 
 					await adminWhatsAppNotification(userMessage.userPhone, message);
-
-					// Llama a la función que genera el Excel
 					
-					// Envía el Excel al Admin
+					// Llama a la función que genera el Excel
+					const fileUrl = await exportDealersToExcelTemplate();
+
+					// Se envía el Excel por WhatsApp
+					await sendExcelByWhatsApp(userMessage.userPhone, fileUrl, "Concesionarios");
 
 					log =
-						`Se envió al Admin ${userMessage.name}: ${userMessage.userPhone} que recibirá un Excel con los concesionarios.`;
+						`Se envió al Admin ${userMessage.name}: ${userMessage.userPhone} un Excel con los concesionarios.`;
 
 				} else if (userMessage.message.includes('"Envio_de_Comunicacion"')) {
 					const message = `🔔 *Notificación:*\n\nPor favor entre en su celular para completar el proceso de envío de una Comunicación.\n\n*Cámara de Concesionarios Stellantis*`;
