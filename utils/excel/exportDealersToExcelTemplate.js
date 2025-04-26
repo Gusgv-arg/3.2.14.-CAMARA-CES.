@@ -31,13 +31,13 @@ export const exportDealersToExcelTemplate = async () => {
                 dealersSheet.getCell(`B${dealerRow}`).value = dealer.name;
                 // Configurar formato numérico para código
                 const codeCell = dealersSheet.getCell(`C${dealerRow}`);
-                codeCell.value = dealer.code;
+                codeCell.value = Number(dealer.code);
                 codeCell.numFmt = '0';
                 dealersSheet.getCell(`D${dealerRow}`).value = dealer.province;
                 dealersSheet.getCell(`E${dealerRow}`).value = dealer.address;
                 // Configurar formato numérico para CUIT
                 const cuitCell = dealersSheet.getCell(`F${dealerRow}`);
-                cuitCell.value = dealer.cuit;
+                cuitCell.value = Number(dealer.cuit);
                 cuitCell.numFmt = '0';
                 dealerRow++;
             }
@@ -54,7 +54,7 @@ export const exportDealersToExcelTemplate = async () => {
                         
                         // Configurar formato numérico para código del dealer
                         const dealerCodeCell = employeesSheet.getCell(`B${employeeRow}`);
-                        dealerCodeCell.value = dealer.code;
+                        dealerCodeCell.value = Number(dealer.code);
                         dealerCodeCell.numFmt = '0';
                         
                         // Datos del empleado
@@ -62,7 +62,7 @@ export const exportDealersToExcelTemplate = async () => {
 
                         // Configurar formato numérico para teléfono
                         const phoneCell = employeesSheet.getCell(`D${employeeRow}`);
-                        phoneCell.value = employee.phone;
+                        phoneCell.value = Number(employee.phone);
                         phoneCell.numFmt = '0';
                         employeesSheet.getCell(`E${employeeRow}`).value = employee.mail;
                         employeesSheet.getCell(`F${employeeRow}`).value = employee.profile;
