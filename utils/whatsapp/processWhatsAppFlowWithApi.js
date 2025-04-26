@@ -22,7 +22,7 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 					
 					// Llama a la función que genera el Excel
 					const fileUrl = await exportDealersToExcelTemplate();
-
+					console.log("fileUrl", fileUrl);
 					// Se envía el Excel por WhatsApp
 					await sendExcelByWhatsApp(userMessage.userPhone, fileUrl, "Concesionarios");
 
