@@ -29,10 +29,16 @@ export const exportDealersToExcelTemplate = async () => {
             if (dealer.isActive) {
                 dealersSheet.getCell(`A${dealerRow}`).value = dealer.brand;
                 dealersSheet.getCell(`B${dealerRow}`).value = dealer.name;
-                dealersSheet.getCell(`C${dealerRow}`).value = dealer.code;
+                // Configurar formato numérico para código
+                const codeCell = dealersSheet.getCell(`C${dealerRow}`);
+                codeCell.value = dealer.code;
+                codeCell.numFmt = '0';
                 dealersSheet.getCell(`D${dealerRow}`).value = dealer.province;
                 dealersSheet.getCell(`E${dealerRow}`).value = dealer.address;
-                dealersSheet.getCell(`F${dealerRow}`).value = dealer.cuit;
+                // Configurar formato numérico para CUIT
+                const cuitCell = dealersSheet.getCell(`F${dealerRow}`);
+                cuitCell.value = dealer.cuit;
+                cuitCell.numFmt = '0';
                 dealerRow++;
             }
         });
@@ -45,11 +51,19 @@ export const exportDealersToExcelTemplate = async () => {
                     if (employee.isActive) {
                         // Datos del concesionario
                         employeesSheet.getCell(`A${employeeRow}`).value = dealer.name;
-                        employeesSheet.getCell(`B${employeeRow}`).value = dealer.code;
+                        
+                        // Configurar formato numérico para código del dealer
+                        const dealerCodeCell = employeesSheet.getCell(`B${employeeRow}`);
+                        dealerCodeCell.value = dealer.code;
+                        dealerCodeCell.numFmt = '0';
                         
                         // Datos del empleado
                         employeesSheet.getCell(`C${employeeRow}`).value = employee.empName;
-                        employeesSheet.getCell(`D${employeeRow}`).value = employee.phone;
+
+                        // Configurar formato numérico para teléfono
+                        const phoneCell = employeesSheet.getCell(`D${employeeRow}`);
+                        phoneCell.value = employee.phone;
+                        phoneCell.numFmt = '0';
                         employeesSheet.getCell(`E${employeeRow}`).value = employee.mail;
                         employeesSheet.getCell(`F${employeeRow}`).value = employee.profile;
                         
