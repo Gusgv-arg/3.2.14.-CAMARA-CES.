@@ -4,6 +4,7 @@ import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotific
 import { v4 as uuidv4 } from "uuid";
 import { exportDealersToExcelTemplate } from "../excel/exportDealersToExcelTemplate.js";
 import { sendExcelByWhatsApp } from "../excel/sendExcelByWhatsApp.js";
+import { sendAbmTemplateByWhatsApp } from "../excel/sendAbmTemplateByWhatsApp.js";
 
 export const processWhatsAppFlowWithApi = async (userMessage) => {
 	const type = userMessage.type;
@@ -17,15 +18,15 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 				
 					console.log("Entró Menú de Admin. opción ABM_Concesionarios");
 					// Se envía un mensaje y el Template
-					const message = `🔔 *Notificación:*\n\n📣 Espere a recibir una Plantilla en Excel y complete la misma con la información para dar de alta o modificar concesionarios y/o personal. Luego adjunte la misma por WhatsApp.\n🙏 Por favor no modifique la estructura del archivo.\nℹ️ Al abrir el archivo No le de importancia a los mensajes de error.\n\n*Cámara de Concesionarios Stellantis*`; 
+					const message = `🔔 *Notificación:*\n\n📣 Espere a recibir una Plantilla en Excel.\nℹ️ Al abrir el archivo No le de importancia a los mensajes de error.\n👨‍💻 Complete con la información para dar de alta o modificar concesionarios y/o personal.\n📎 Adjunte el archivo por WhatsApp.\n🙏 Por favor no modifique la estructura del archivo.\n\n*Cámara de Concesionarios Stellantis*`; 
 					
 					await adminWhatsAppNotification(userMessage.userPhone, message);
 
 					// Se envía el Template por WhatsApp
-					const templateName = "ABM_Concesionarios";
+					const templateName = "Plantilla_Base_Redes";
 					const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla_Base_Redes.xlsx";        
 
-					await sendExcelByWhatsApp(userMessage.userPhone, excelTemplate, templateName);
+					await sendAbmTemplateByWhatsApp(userMessage.userPhone, excelTemplate, templateName);
 					
 				} else if (userMessage.message.includes ('"Base_Concesionarios_en_Excel"')) {
 					console.log("entre al if de Base_Concesionarios_en_Excel");
