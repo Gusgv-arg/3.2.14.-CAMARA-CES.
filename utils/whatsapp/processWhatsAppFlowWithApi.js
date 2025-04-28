@@ -13,7 +13,21 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 		if (type === "interactive") {
 			// ---- TOKEN 1: ADMIN -------------------------------------//
 			if (userMessage.message.includes('"flow_token":"1"')) {
-				if (userMessage.message.includes('"Base_Concesionarios_en_Excel"')) {
+				if (userMessage.message.includes('"Opciones":"ABM_Concesionarios"')) {
+				
+					console.log("Entró Menú de Admin. opción ABM_Concesionarios");
+					// Se envía un mensaje y el Template
+					const message = `🔔 *Notificación:*\n\n📣 Espere a recibir una Plantilla en Excel y complete la misma con la información para dar de alta o modificar concesionarios y/o personal. Luego adjunte la misma por WhatsApp.\n🙏 Por favor no modifique la estructura del archivo.\nℹ️ Al abrir el archivo No le de importancia a los mensajes de error.\n\n*Cámara de Concesionarios Stellantis*`; 
+					
+					await adminWhatsAppNotification(userMessage.userPhone, message);
+
+					// Se envía el Template por WhatsApp
+					const templateName = "ABM_Concesionarios";
+					const excelTemplate = "https://raw.githubusercontent.com/Gusgv-arg/3.2.14.-CAMARA-CES./main/assets/Plantilla_Base_Redes.xlsx";        
+
+					await sendExcelByWhatsApp(userMessage.userPhone, excelTemplate, templateName);
+					
+				} else if (userMessage.message.includes ('"Base_Concesionarios_en_Excel"')) {
 					console.log("entre al if de Base_Concesionarios_en_Excel");
 
 					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios Activos.\n\n*Cámara de Concesionarios Stellantis*`;
@@ -25,7 +39,7 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 					console.log("fileUrl", fileUrl);
 					// Se envía el Excel por WhatsApp
 					await sendExcelByWhatsApp(userMessage.userPhone, fileUrl, "Concesionarios");
-
+					
 					log =
 						`Se envió al Admin ${userMessage.name}: ${userMessage.userPhone} un Excel con los concesionarios.`;
 
