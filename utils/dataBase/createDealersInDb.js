@@ -14,6 +14,12 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const MONGODB_URI = process.env.MONGODB_URI 
 
+// Función para formatear la fecha como "día/mes/año"
+function formatDate(dateString) {
+    const [day, month, year] = dateString.split('/'); // Dividir la fecha en partes
+    return `${day}/${month}/${year}`; // Retornar en el formato deseado
+}
+
 async function createDealerDb() {
     try {
         console.log('Attempting to connect to MongoDB...');
@@ -43,6 +49,7 @@ async function createDealerDb() {
                     profile: emp.profile,
                     phone: emp.phone.toString(),
                     mail: emp.mail,
+                    presidentMandate: formatDate(emp.presidentMandate),
                     isActive: emp.isActive,
                     docs: []
                 }))
@@ -80,7 +87,7 @@ async function createDealerDb() {
 }
 
 // Execute
-/* createDealerDb().catch(err => {
+createDealerDb().catch(err => {
     console.error("Fatal Error:", err);
     process.exit(1);
-}); */
+});

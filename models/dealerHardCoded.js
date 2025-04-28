@@ -6,14 +6,15 @@ export const dealers = [
 		address: "Prueba",
 		province: "Prueba",
 		cuit: "1",
-		isActive: true,
+		isActive: "SI",
 		employees: [
 			{
 				empName: "Prueba",
-				profile: "Accionista", 
+				profile: "Presidente", 
 				phone: 5491161405589,
 				mail: "gusgvillafane@gmail.com",
-				isActive: true,
+				isActive: "SI",
+				presidentMandate: "19/10/2025",
 				/* docs: [
 					{
 						type: "", // [Minuta, Información, Encuesta, ...]

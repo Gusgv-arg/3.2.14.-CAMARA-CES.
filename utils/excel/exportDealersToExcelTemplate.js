@@ -40,6 +40,7 @@ export const exportDealersToExcelTemplate = async () => {
                 cuitCell.value = Number(dealer.cuit);
                 cuitCell.numFmt = '0';
                 dealerRow++;
+                dealersSheet.getCell(`G${dealerRow}`).value = dealer.isActive;
             }
         });
 
@@ -50,22 +51,31 @@ export const exportDealersToExcelTemplate = async () => {
                 dealer.employees.forEach(employee => {
                     if (employee.isActive) {
                         // Datos del concesionario
-                        employeesSheet.getCell(`A${employeeRow}`).value = dealer.name;
+                        employeesSheet.getCell(`A${employeeRow}`).value = dealer.brand;
+                        employeesSheet.getCell(`B${employeeRow}`).value = dealer.name;
                         
                         // Configurar formato numérico para código del dealer
-                        const dealerCodeCell = employeesSheet.getCell(`B${employeeRow}`);
+                        const dealerCodeCell = employeesSheet.getCell(`C${employeeRow}`);
                         dealerCodeCell.value = Number(dealer.code);
                         dealerCodeCell.numFmt = '0';
                         
                         // Datos del empleado
-                        employeesSheet.getCell(`C${employeeRow}`).value = employee.empName;
+                        employeesSheet.getCell(`D${employeeRow}`).value = employee.empName;
 
                         // Configurar formato numérico para teléfono
-                        const phoneCell = employeesSheet.getCell(`D${employeeRow}`);
+                        const phoneCell = employeesSheet.getCell(`E${employeeRow}`);
                         phoneCell.value = Number(employee.phone);
                         phoneCell.numFmt = '0';
-                        employeesSheet.getCell(`E${employeeRow}`).value = employee.mail;
-                        employeesSheet.getCell(`F${employeeRow}`).value = employee.profile;
+                        
+                        employeesSheet.getCell(`F${employeeRow}`).value = employee.mail;
+                        employeesSheet.getCell(`G${employeeRow}`).value = employee.profile;
+                        
+                        // Agregar fecha de mandato presidencial si existe
+                        if (employee.presidentMandate) {
+                            employeesSheet.getCell(`H${employeeRow}`).value = new Date(employee.presidentMandate);
+                            employeesSheet.getCell(`H${employeeRow}`).numFmt = 'dd/mm/yyyy';
+                        }
+                        employeesSheet.getCell(`I${employeeRow}`).value = employee.isActive;
                         
                         employeeRow++;
                     }

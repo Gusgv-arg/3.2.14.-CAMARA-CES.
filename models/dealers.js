@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const documentSchema = new mongoose.Schema({
-    docName: String,
+	docName: String,
 	docType: { type: String, enum: ["Minuta", "Información", "Encuesta"] },
 	docArea: {
 		type: String,
@@ -20,28 +21,32 @@ const documentSchema = new mongoose.Schema({
 		type: String,
 		enum: ["Enviado", "Recibido", "Leído", "Error", "Respuesta"],
 	},
-    docCreationDate: { type: Date, default: Date.now },
-	docStatusDate: {type: Date, default: Date.now},
+	docCreationDate: { type: Date, default: Date.now },
+	docStatusDate: { type: Date, default: Date.now },
 });
 
 const employeeSchema = new mongoose.Schema({
 	empName: String,
-	profile: 
-		{
-			type: String,
-			enum: [
-				"Accionista",
-				"General",
-				"Ventas",
-				"Postventa",
-				"Planes",
-				"Administración",
-				"Calidad",
-			],
-		},	
+	profile: {
+		type: String,
+		enum: [
+			"Accionista",
+			"Presidente",
+			"General",
+			"Ventas",
+			"Postventa",
+			"Planes",
+			"Administración",
+			"Calidad",
+		],
+	},
 	phone: String,
 	mail: String,
-	isActive: Boolean,
+	isActive: { type: String, enum: ["SI", "NO"], default: "SI" },
+	presidentMandate: {
+		type: String,
+		default: null,
+	},
 	docs: [documentSchema],
 });
 
@@ -49,14 +54,14 @@ const dealerSchema = new mongoose.Schema({
 	brand: {
 		type: String,
 		required: true,
-		enum: ["Peugeot", "Citroen", "DS", "Fiat", "Jeep", "Ram"],
+		enum: ["Peugeot", "Citroen", "Fiat", "Jeep", "RAM"],
 	},
 	name: String,
 	code: String,
 	address: String,
 	province: String,
 	cuit: String,
-	isActive: Boolean,
+	isActive: { type: String, enum: ["SI", "NO"], default: "SI" },
 	employees: [employeeSchema],
 });
 

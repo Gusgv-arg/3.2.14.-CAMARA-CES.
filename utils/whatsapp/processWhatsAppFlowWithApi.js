@@ -18,7 +18,7 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 				
 					console.log("Entró Menú de Admin. opción ABM_Concesionarios");
 					// Se envía un mensaje y el Template
-					const message = `🔔 *Notificación:*\n\n📣 Espere a recibir una Plantilla en Excel.\nℹ️ Al abrir el archivo No le de importancia a los mensajes de error.\n👨‍💻 Complete con la información para dar de alta o modificar concesionarios y/o personal.\n📎 Adjunte el archivo por WhatsApp.\n🙏 Por favor no modifique la estructura del archivo.\n\n*Cámara de Concesionarios Stellantis*`; 
+					const message = `🔔 *Notificación:*\n\n📣 Espere a recibir un archivo en Excel.\nℹ️ Al abrirlo No le de importancia a los mensajes de error.\n👨‍💻 Complete la información para dar de alta o modificar concesionarios y/o personal.\n📎 Adjunte el archivo por WhatsApp.\n🙏 No modifique la estructura del archivo.\n\n*Cámara de Concesionarios Stellantis*`; 
 					
 					await adminWhatsAppNotification(userMessage.userPhone, message);
 
