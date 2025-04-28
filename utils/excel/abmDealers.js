@@ -22,15 +22,15 @@ export const abmDealers = async (filePath) => {
     for (const dealer of dealersData) {
       const { Marca, Concesionario, Código, Provincia, Domicilio, Cuit, Activo } = dealer;
 
-      // Buscar el concesionario en la base de datos
+      // Buscar el concesionario en la base de datos x marca y código
       let existingDealer = await Dealers.findOne({
         brand: Marca,
-        name: Concesionario,
         code: Código,
       });
 
       if (existingDealer) {
         // Actualizar concesionario existente
+        existingDealer.name = Concesionario;
         existingDealer.province = Provincia;
         existingDealer.address = Domicilio;
         existingDealer.cuit = Cuit;
@@ -59,7 +59,6 @@ export const abmDealers = async (filePath) => {
       // Buscar el concesionario correspondiente
       const dealer = await Dealers.findOne({
         brand: Marca,
-        name: Concesionario,
         code: Código,
       });
 

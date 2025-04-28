@@ -4,6 +4,9 @@ import { handleWhatsappMessage } from "./handleWhatsappMessage.js";
 import Dealers from "../../models/dealers.js";
 import dotenv from "dotenv";
 import { sendFlow_2ToDealer } from "../../flows/sendFlow_2ToDealer.js";
+import { getMediaWhatsappUrl } from "../media/getMediaWhatsappUrl.js";
+import { downloadWhatsAppMedia } from "../media/downloadWhatsAppMedia.js";
+import { abmDealers } from "../excel/abmDealers.js";
 
 dotenv.config();
 const adminPhone = process.env.ADMIN_PHONE;
@@ -33,8 +36,21 @@ export const processWhatsAppWithApi = async (userMessage) => {
 			} else if (userMessage.type === "document") {
 				// Opción de ABM Concesionarios / personal
 				console.log("entre al if de document del Admin");
-			
+				
+				// Get the Document URL from WhatsApp
+				const document = await getMediaWhatsappUrl(userMessage.documentId);
+				const documentUrl = document.data.url;
+
+				// Download Document from WhatsApp
+				const documentBuffer = await downloadWhatsAppMedia(documentUrl);
+				const documentBufferData = documentBuffer.data;
+
+				// Call the function to process the excel
+				const processExcel = await abmDealers(documentBufferData);
+
+				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.`;	
 			}
+			
 		} else {
 			// NO es el ADMIN, busca en la Base de Concesionarios
 			const dealer = await Dealers.findOne({
