@@ -67,15 +67,17 @@ export const exportDealersToExcelTemplate = async () => {
                         phoneCell.value = Number(employee.phone);
                         phoneCell.numFmt = '0';
                         
-                        employeesSheet.getCell(`F${employeeRow}`).value = employee.mail;
-                        employeesSheet.getCell(`G${employeeRow}`).value = employee.profile;
+                        employeesSheet.getCell(`F${employeeRow}`).value = employee.phoneOk;
+                        employeesSheet.getCell(`G${employeeRow}`).value = employee.mail;
+                        employeesSheet.getCell(`H${employeeRow}`).value = employee.mailOk;
+                        employeesSheet.getCell(`I${employeeRow}`).value = employee.profile;
                         
                         // Agregar fecha de mandato presidencial si existe
                         if (employee.presidentMandate) {
-                            employeesSheet.getCell(`H${employeeRow}`).value = new Date(employee.presidentMandate);
-                            employeesSheet.getCell(`H${employeeRow}`).numFmt = 'dd/mm/yyyy';
+                            employeesSheet.getCell(`J${employeeRow}`).value = new Date(employee.presidentMandate);
+                            employeesSheet.getCell(`J${employeeRow}`).numFmt = 'dd/mm/yyyy';
                         }
-                        employeesSheet.getCell(`I${employeeRow}`).value = employee.isActive;
+                        employeesSheet.getCell(`K${employeeRow}`).value = employee.isActive;
                         
                         employeeRow++;
                     }

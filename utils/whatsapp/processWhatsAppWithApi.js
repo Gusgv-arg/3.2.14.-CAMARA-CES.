@@ -37,20 +37,23 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				// Opción de ABM Concesionarios / personal
 				console.log("entre al if de document del Admin");
 				
-				// Get the Document URL from WhatsApp
+				// Buscar la URL de WhatsApp
 				const document = await getMediaWhatsappUrl(userMessage.documentId);
 				const documentUrl = document.data.url;
 
-				// Download Document from WhatsApp
+				// Bajar el documento de WhatsApp
 				const documentBuffer = await downloadWhatsAppMedia(documentUrl);
 				const documentBufferData = documentBuffer.data;
 
-				// Call the function to process the excel
-				const processExcel = await abmDealers(documentBufferData);
+				// Función de ABM de Concesionarios y Personal
+				const phonesAndMailsToCheck = await abmDealers(documentBufferData);
+				console.log("phonesAndMailsToCheck", phonesAndMailsToCheck);
 
+				// Llamar a la función que verifica los teléfonos y correos
+				
 				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.`;	
 			}
-			
+
 		} else {
 			// NO es el ADMIN, busca en la Base de Concesionarios
 			const dealer = await Dealers.findOne({
