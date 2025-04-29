@@ -32,11 +32,10 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				// Agrego el wamId al objeto userMessage para traquear status FLOW1
 				userMessage.wamId_Flow1 = wamId_Flow1;
 				log = `1-Se envió el Flow1 al Administrador.`;
-			
 			} else if (userMessage.type === "document") {
 				// Opción de ABM Concesionarios / personal
 				console.log("entre al if de document del Admin");
-				
+
 				// Buscar la URL de WhatsApp
 				const document = await getMediaWhatsappUrl(userMessage.documentId);
 				const documentUrl = document.data.url;
@@ -45,15 +44,33 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				const documentBuffer = await downloadWhatsAppMedia(documentUrl);
 				const documentBufferData = documentBuffer.data;
 
-				// Función de ABM de Concesionarios y Personal
+				// Función de ABM de Concesionarios y Personal: devuelve un array con los datos a verificar
 				const phonesAndMailsToCheck = await abmDealers(documentBufferData);
 				console.log("phonesAndMailsToCheck", phonesAndMailsToCheck);
 
-				// Llamar a la función que verifica los teléfonos y correos
-				
-				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.`;	
-			}
+				// Comunicar al usuario los resultados del ABM
+				if (phonesAndMailsToCheck.updateErrors.length > 0) {
+					// Construir el mensaje con los detalles de los errores
+					const errorsDetails = phonesAndMailsToCheck.updateErrors
+						.map(
+							(error) =>
+								`Tipo de Dato: ${error.type}\nConcesionario: ${JSON.stringify(
+									error.data
+								)}\nError: ${error.error}`
+						)
+						.join("\n\n");
 
+					message = `🔔 *Notificación:*\n\n❌ Se encontraron errores al procesar el archivo. Detalles:\n${errorsDetails}.\nℹ️ Se verificarán aquellos Celulares y Mails que así lo requieran, y se lo notificará del resultado.\n\n*Cámara de Concesionarios Stellantis*`;
+				} else {
+					message = `🔔 *Notificación:*\n\n✅ La Base de datos fue actualizada sin errores con el Excel.\nℹ️ Se verificarán aquellos Celulares y Mails que así lo requieran, y se lo notificará del resultado.\n\n*Cámara de Concesionarios Stellantis*`;
+				}
+
+				await handleWhatsappMessage(userMessage.userPhone, message);
+
+				// Llamar a la función que verifica los teléfonos y correos
+
+				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.2-Notificación al Admin: ${message}`;
+			}
 		} else {
 			// NO es el ADMIN, busca en la Base de Concesionarios
 			const dealer = await Dealers.findOne({

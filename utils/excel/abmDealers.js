@@ -77,7 +77,7 @@ export const abmDealers = async (documentBufferData) => {
 			} catch (error) {
 				// Acumular errores en updateErrors
 				verificationData.updateErrors.push({
-					type: "Dealer",
+					type: "Concesionario",
 					data: dealer,
 					error: error.message,
 				});
@@ -119,7 +119,7 @@ export const abmDealers = async (documentBufferData) => {
 						existingEmployee.presidentMandate = VencimientoMandato || null;
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
-							existingEmployee.mailOk = "NOK"; // Cambiar el estado del mail a NOK si es diferente
+							existingEmployee.mailOk = "Sin_Verificar"; // Cambiar el estado del mail a NOK si es diferente
 							verificationData.mailsNOK.push(Mail);
 						}
 						existingEmployee.mail = Mail ? Mail : existingEmployee.mail;
@@ -128,9 +128,9 @@ export const abmDealers = async (documentBufferData) => {
 						dealer.employees.push({
 							empName: Nombre,
 							phone: Celular,
-							phoneOk: "NOK",
+							phoneOk: "Sin_Verificar",
 							mail: Mail,
-							mailOk: "NOK",
+							mailOk: "Sin_Verificar",
 							profile: Perfil,
 							presidentMandate: VencimientoMandato || null,
 							isActive: Activo === "SI" ? "SI" : "NO",
@@ -146,7 +146,7 @@ export const abmDealers = async (documentBufferData) => {
 			} catch (error) {
 				// Acumular errores en updateErrors
 				verificationData.updateErrors.push({
-					type: "Employee",
+					type: "Personal",
 					data: person,
 					error: error.message,
 				  });
