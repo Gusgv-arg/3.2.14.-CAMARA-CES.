@@ -32,7 +32,7 @@ const employeeSchema = new mongoose.Schema({
 		enum: [
 			"Accionista",
 			"Presidente",
-			"General",
+			"Gerente General",
 			"Ventas",
 			"Postventa",
 			"Planes",
