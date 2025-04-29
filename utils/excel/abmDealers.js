@@ -33,6 +33,8 @@ export const abmDealers = async (documentBufferData) => {
 		// Convertir las hojas a JSON
 		const dealersData = xlsx.utils.sheet_to_json(dealersSheet);
 		const personalData = xlsx.utils.sheet_to_json(personalSheet);
+		
+		console.log("personalData", personalData);
 
 		// Objeto para almacenar los teléfonos y correos con estado "NOK"
 		const verificationData = {
@@ -131,9 +133,12 @@ export const abmDealers = async (documentBufferData) => {
 						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
 						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
 
+						const mandatoPresidenteStr = Mandato_Presidente ? String(Mandato_Presidente).trim() : null;
 						if (Perfil === "Presidente") {
-							if (Mandato_Presidente && isValidDate(Mandato_Presidente)) {
-								existingEmployee.presidentMandate = Mandato_Presidente;
+							console.log("Validando Mandato_Presidente:", Mandato_Presidente); // Verificar el valor
+    
+							if (mandatoPresidenteStr && isValidDate(Mandato_Presidente)) {
+								existingEmployee.presidentMandate = mandatoPresidenteStr;
 							} else {
 								// Agregar al array de errores si la fecha no es válida
 								verificationData.updateErrors.push({
@@ -143,7 +148,7 @@ export const abmDealers = async (documentBufferData) => {
 								});
 							}
 						}
-						
+
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
 							existingEmployee.mailOk = "Sin_Verificar"; // Cambiar el estado del mail a NOK si es diferente
