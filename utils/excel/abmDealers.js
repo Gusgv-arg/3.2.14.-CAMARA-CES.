@@ -15,10 +15,20 @@ const isValidDate = (dateString) => {
     );
 };
 
+const formatDate = (date) => {
+    if (date instanceof Date) {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    return date;
+};
+
 export const abmDealers = async (documentBufferData) => {
 	try {
 		// Leer el archivo Excel recibiendo un buffer
-		const workbook = xlsx.read(documentBufferData, { type: "buffer" });
+		const workbook = xlsx.read(documentBufferData, { type: "buffer", cellDates: true  });
 
 		// Obtener las hojas de trabajo
 		const dealersSheet = workbook.Sheets["Concesionarios"];
@@ -114,8 +124,12 @@ export const abmDealers = async (documentBufferData) => {
 				Activo,
 			} = person;
 
-			try {
-			
+			// Convertir Mandato_Presidente a formato dd/mm/yyyy
+			const mandatoPresidenteStr = Mandato_Presidente instanceof Date
+			? formatDate(Mandato_Presidente)
+			: Mandato_Presidente;
+
+			try {			
 				// Buscar el concesionario correspondiente
 				const dealer = await Dealers.findOne({
 					brand: Marca,
@@ -133,18 +147,14 @@ export const abmDealers = async (documentBufferData) => {
 						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
 						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
 
-						const mandatoPresidenteStr = Mandato_Presidente ? String(Mandato_Presidente).trim() : null;
 						if (Perfil === "Presidente") {
-							console.log("Validando Mandato_Presidente:", Mandato_Presidente); // Verificar el valor
-    
-							if (mandatoPresidenteStr && isValidDate(Mandato_Presidente)) {
+							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
 								existingEmployee.presidentMandate = mandatoPresidenteStr;
 							} else {
-								// Agregar al array de errores si la fecha no es válida
 								verificationData.updateErrors.push({
 									type: "Personal",
 									data: person,
-									error: `Fecha inválida para Mandato_Presidente: ${Mandato_Presidente}`,
+									error: `Fecha inválida para Mandato_Presidente: ${mandatoPresidenteStr}`,
 								});
 							}
 						}
@@ -155,20 +165,31 @@ export const abmDealers = async (documentBufferData) => {
 							verificationData.mailsNOK.push(Mail);
 						}
 						existingEmployee.mail = Mail ? Mail : existingEmployee.mail;
+
 					} else {
-						// Agregar un nuevo empleado
-						dealer.employees.push({
+						const newEmployee = {
 							empName: Nombre,
 							phone: Celular,
 							phoneOk: "Sin_Verificar",
 							mail: Mail,
 							mailOk: "Sin_Verificar",
 							profile: Perfil,
-							...(Perfil === "Presidente" && { presidentMandate: Mandato_Presidente ? Mandato_Presidente : null }),    
 							isActive: Activo && Activo.trim() !== "" ? (Activo === "SI" ? "SI" : "NO") : "SI",
-						});
-	
-						// Agregar a la lista de verificación
+						};
+		
+						if (Perfil === "Presidente") {
+							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
+								newEmployee.presidentMandate = mandatoPresidenteStr;
+							} else {
+								verificationData.updateErrors.push({
+									type: "Personal",
+									data: person,
+									error: `Fecha inválida para Mandato_Presidente: ${mandatoPresidenteStr}`,
+								});
+							}
+						}
+		
+						dealer.employees.push(newEmployee);
 						verificationData.phonesNOK.push(Celular);
 						if (Mail) {
 							verificationData.mailsNOK.push(Mail);
