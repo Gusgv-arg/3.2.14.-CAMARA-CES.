@@ -139,7 +139,7 @@ export const abmDealers = async (documentBufferData) => {
 				if (dealer) {
 					// Buscar si el empleado ya existe
 					const existingEmployee = dealer.employees.find(
-						(emp) => emp.phone === Celular
+						(emp) => emp.phone === String(Celular)
 					);
 	
 					if (existingEmployee) {
