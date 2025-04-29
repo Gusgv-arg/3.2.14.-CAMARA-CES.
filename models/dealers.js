@@ -41,9 +41,9 @@ const employeeSchema = new mongoose.Schema({
 		],
 	},
 	phone: String,
-	phoneOk: { type: String, enum: ["OK", "NOK"], default: "NOK", required: true },
+	phoneOk: { type: String, enum: ["OK", "NOK", "Sin_Verificar"], default: "Sin_Verificar", required: true },
 	mail: String,
-	mailOk: { type: String, enum: ["OK", "NOK"], default: "NOK", required: true },
+	mailOk: { type: String, enum: ["OK", "NOK", "Sin_Verificar"], default: "Sin_Verificar", required: true },
 	isActive: { type: String, enum: ["SI", "NO"], default: "SI", required: true },
 	presidentMandate: {
 		type: String,

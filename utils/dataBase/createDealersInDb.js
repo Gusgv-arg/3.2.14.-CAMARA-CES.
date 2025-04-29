@@ -48,9 +48,9 @@ async function createDealerDb() {
                     empName: emp.empName,
                     profile: emp.profile,
                     phone: emp.phone.toString(),
-                    phoneOk: "NOK",
+                    phoneOk: "Sin_Verificar",
                     mail: emp.mail,
-                    mailOk: "NOK",
+                    mailOk: "Sin_Verificar",
                     presidentMandate: formatDate(emp.presidentMandate),
                     isActive: emp.isActive,
                     docs: []

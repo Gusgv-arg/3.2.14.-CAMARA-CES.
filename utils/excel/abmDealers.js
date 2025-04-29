@@ -1,10 +1,10 @@
 import xlsx from "xlsx";
 import Dealers from "../../models/dealers.js";
 
-export const abmDealers = async (filePath) => {
+export const abmDealers = async (documentBufferData) => {
 	try {
-		// Leer el archivo Excel
-		const workbook = xlsx.readFile(filePath);
+		// Leer el archivo Excel recibiendo un buffer
+		const workbook = xlsx.read(documentBufferData, { type: "buffer" });
 
 		// Obtener las hojas de trabajo
 		const dealersSheet = workbook.Sheets["Concesionarios"];
