@@ -1,6 +1,20 @@
 import xlsx from "xlsx";
 import Dealers from "../../models/dealers.js";
 
+// Función para validar el formato de fecha (día/mes/año)
+const isValidDate = (dateString) => {
+    const regex = /^\d{2}\/\d{2}\/\d{4}$/; // Formato: dd/mm/yyyy
+    if (!regex.test(dateString)) return false;
+
+    const [day, month, year] = dateString.split("/").map(Number);
+    const date = new Date(year, month - 1, day);
+    return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+    );
+};
+
 export const abmDealers = async (documentBufferData) => {
 	try {
 		// Leer el archivo Excel recibiendo un buffer
@@ -69,8 +83,8 @@ export const abmDealers = async (documentBufferData) => {
 						province: Provincia,
 						address: Domicilio,
 						cuit: Cuit,
-						isActive: Activo === "SI" ? "SI" : "NO",
-						employees: [],
+						isActive: Activo && Activo.trim() !== "" ? (Activo === "SI" ? "SI" : "NO") : "SI",
+        				employees: [],
 					});
 					await existingDealer.save();
 				}
@@ -94,7 +108,7 @@ export const abmDealers = async (documentBufferData) => {
 				Celular,
 				Mail,
 				Perfil,
-				"Vencimiento mandato Presidente": VencimientoMandato,
+				Mandato_Presidente,
 				Activo,
 			} = person;
 
@@ -116,7 +130,20 @@ export const abmDealers = async (documentBufferData) => {
 						// Actualizar empleado existente
 						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
 						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
-						existingEmployee.presidentMandate = VencimientoMandato || null;
+
+						if (Perfil === "Presidente") {
+							if (Mandato_Presidente && isValidDate(Mandato_Presidente)) {
+								existingEmployee.presidentMandate = Mandato_Presidente;
+							} else {
+								// Agregar al array de errores si la fecha no es válida
+								verificationData.updateErrors.push({
+									type: "Personal",
+									data: person,
+									error: `Fecha inválida para Mandato_Presidente: ${Mandato_Presidente}`,
+								});
+							}
+						}
+						
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
 							existingEmployee.mailOk = "Sin_Verificar"; // Cambiar el estado del mail a NOK si es diferente
@@ -132,15 +159,16 @@ export const abmDealers = async (documentBufferData) => {
 							mail: Mail,
 							mailOk: "Sin_Verificar",
 							profile: Perfil,
-							presidentMandate: VencimientoMandato || null,
-							isActive: Activo === "SI" ? "SI" : "NO",
+							...(Perfil === "Presidente" && { presidentMandate: Mandato_Presidente ? Mandato_Presidente : null }),    
+							isActive: Activo && Activo.trim() !== "" ? (Activo === "SI" ? "SI" : "NO") : "SI",
 						});
 	
 						// Agregar a la lista de verificación
 						verificationData.phonesNOK.push(Celular);
-						verificationData.mailsNOK.push(Mail);
-					}
-	
+						if (Mail) {
+							verificationData.mailsNOK.push(Mail);
+						}						
+					}	
 					await dealer.save();
 				}
 			} catch (error) {
