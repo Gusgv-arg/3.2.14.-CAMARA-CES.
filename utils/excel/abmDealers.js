@@ -146,7 +146,7 @@ export const abmDealers = async (documentBufferData) => {
 						// Actualizar empleado existente
 						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
 						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
-
+						
 						if (Perfil === "Presidente") {
 							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
 								existingEmployee.presidentMandate = mandatoPresidenteStr;
@@ -157,7 +157,23 @@ export const abmDealers = async (documentBufferData) => {
 									error: `Fecha inválida para Mandato_Presidente: ${mandatoPresidenteStr}`,
 								});
 							}
-						}
+						} else {
+							// Validar que la fecha de mandato no sea mayor a la actual
+							if (existingEmployee.presidentMandate) {
+								const today = new Date();
+								const [day, month, year] = existingEmployee.presidentMandate.split("/").map(Number);
+								const mandateDate = new Date(year, month - 1, day);
+					
+								if (mandateDate > today) {
+									verificationData.updateErrors.push({
+										type: "Personal",
+										data: person,
+										error: `No se puede cambiar el perfil a "${Perfil}" porque el mandato como Presidente es válido hasta ${existingEmployee.presidentMandate}`,
+									});
+									return; // Salir sin actualizar el registro
+								}
+							}
+						}						
 
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
