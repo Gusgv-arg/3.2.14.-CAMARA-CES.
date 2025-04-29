@@ -146,7 +146,7 @@ export const abmDealers = async (documentBufferData) => {
 						// Actualizar empleado existente
 						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
 						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
-						
+
 						if (Perfil === "Presidente") {
 							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
 								existingEmployee.presidentMandate = mandatoPresidenteStr;
@@ -170,7 +170,7 @@ export const abmDealers = async (documentBufferData) => {
 										data: person,
 										error: `No se puede cambiar el perfil a "${Perfil}" porque el mandato como Presidente es válido hasta ${existingEmployee.presidentMandate}`,
 									});
-									return; // Salir sin actualizar el registro
+									continue; // Salir sin actualizar el registro
 								}
 							}
 						}						
