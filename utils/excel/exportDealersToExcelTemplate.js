@@ -23,6 +23,15 @@ export const exportDealersToExcelTemplate = async () => {
         const dealersSheet = workbook.getWorksheet('Concesionarios');
         const employeesSheet = workbook.getWorksheet('Personal');
 
+        // Copiar validaciones de datos (listas desplegables) del template
+        const copyDataValidations = (sourceSheet, targetSheet) => {
+            sourceSheet.dataValidations.model.forEach(validation => {
+                targetSheet.dataValidations.add(validation);
+            });
+        };
+        copyDataValidations(workbook.getWorksheet('Concesionarios'), dealersSheet);
+        copyDataValidations(workbook.getWorksheet('Personal'), employeesSheet);
+
         // Procesar datos de concesionarios
         let dealerRow = 2; // Comenzar desde la fila 2
         dealers.forEach(dealer => {
