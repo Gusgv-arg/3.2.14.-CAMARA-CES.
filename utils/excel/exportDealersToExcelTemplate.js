@@ -39,8 +39,8 @@ export const exportDealersToExcelTemplate = async () => {
                 const cuitCell = dealersSheet.getCell(`F${dealerRow}`);
                 cuitCell.value = Number(dealer.cuit);
                 cuitCell.numFmt = '0';
-                dealerRow++;
                 dealersSheet.getCell(`G${dealerRow}`).value = dealer.isActive;
+                dealerRow++;
             }
         });
 

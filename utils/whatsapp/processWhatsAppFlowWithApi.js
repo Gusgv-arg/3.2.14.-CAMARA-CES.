@@ -31,7 +31,7 @@ export const processWhatsAppFlowWithApi = async (userMessage) => {
 				} else if (userMessage.message.includes ('"Base_Concesionarios_en_Excel"')) {
 					console.log("entre al if de Base_Concesionarios_en_Excel");
 
-					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios Activos.\n\n*Cámara de Concesionarios Stellantis*`;
+					const message = `🔔 *Notificación:*\n\n✅ En breve recibirá un Excel con todos los Concesionarios Activos. Al abrir el archivo no le de importancia a los mensajes de error.\n\n*Cámara de Concesionarios Stellantis*`;
 
 					await adminWhatsAppNotification(userMessage.userPhone, message);
 					

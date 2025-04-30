@@ -3,32 +3,35 @@ import Dealers from "../../models/dealers.js";
 
 // Función para validar el formato de fecha (día/mes/año)
 const isValidDate = (dateString) => {
-    const regex = /^\d{2}\/\d{2}\/\d{4}$/; // Formato: dd/mm/yyyy
-    if (!regex.test(dateString)) return false;
+	const regex = /^\d{2}\/\d{2}\/\d{4}$/; // Formato: dd/mm/yyyy
+	if (!regex.test(dateString)) return false;
 
-    const [day, month, year] = dateString.split("/").map(Number);
-    const date = new Date(year, month - 1, day);
-    return (
-        date.getFullYear() === year &&
-        date.getMonth() === month - 1 &&
-        date.getDate() === day
-    );
+	const [day, month, year] = dateString.split("/").map(Number);
+	const date = new Date(year, month - 1, day);
+	return (
+		date.getFullYear() === year &&
+		date.getMonth() === month - 1 &&
+		date.getDate() === day
+	);
 };
 
 const formatDate = (date) => {
-    if (date instanceof Date) {
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-    return date;
+	if (date instanceof Date) {
+		const day = String(date.getDate()).padStart(2, "0");
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const year = date.getFullYear();
+		return `${day}/${month}/${year}`;
+	}
+	return date;
 };
 
 export const abmDealers = async (documentBufferData) => {
 	try {
 		// Leer el archivo Excel recibiendo un buffer
-		const workbook = xlsx.read(documentBufferData, { type: "buffer", cellDates: true  });
+		const workbook = xlsx.read(documentBufferData, {
+			type: "buffer",
+			cellDates: true,
+		});
 
 		// Obtener las hojas de trabajo
 		const dealersSheet = workbook.Sheets["Concesionarios"];
@@ -43,7 +46,7 @@ export const abmDealers = async (documentBufferData) => {
 		// Convertir las hojas a JSON
 		const dealersData = xlsx.utils.sheet_to_json(dealersSheet);
 		const personalData = xlsx.utils.sheet_to_json(personalSheet);
-		
+
 		console.log("personalData", personalData);
 
 		// Objeto para almacenar los teléfonos y correos con estado "NOK"
@@ -95,8 +98,13 @@ export const abmDealers = async (documentBufferData) => {
 						province: Provincia,
 						address: Domicilio,
 						cuit: Cuit,
-						isActive: Activo && Activo.trim() !== "" ? (Activo === "SI" ? "SI" : "NO") : "SI",
-        				employees: [],
+						isActive:
+							Activo && Activo.trim() !== ""
+								? Activo === "SI"
+									? "SI"
+									: "NO"
+								: "SI",
+						employees: [],
 					});
 					await existingDealer.save();
 				}
@@ -125,27 +133,32 @@ export const abmDealers = async (documentBufferData) => {
 			} = person;
 
 			// Convertir Mandato_Presidente a formato dd/mm/yyyy
-			const mandatoPresidenteStr = Mandato_Presidente instanceof Date
-			? formatDate(Mandato_Presidente)
-			: Mandato_Presidente;
+			const mandatoPresidenteStr =
+				Mandato_Presidente instanceof Date
+					? formatDate(Mandato_Presidente)
+					: Mandato_Presidente;
 
-			try {			
+			try {
 				// Buscar el concesionario correspondiente
 				const dealer = await Dealers.findOne({
 					brand: Marca,
 					code: Código,
 				});
-	
+
 				if (dealer) {
 					// Buscar si el empleado ya existe
 					const existingEmployee = dealer.employees.find(
 						(emp) => emp.phone === String(Celular)
 					);
-	
+
 					if (existingEmployee) {
 						// Actualizar empleado existente
-						existingEmployee.empName = Nombre ? Nombre : existingEmployee.empName;
-						existingEmployee.profile = Perfil ? Perfil : existingEmployee.profile;
+						existingEmployee.empName = Nombre
+							? Nombre
+							: existingEmployee.empName;
+						existingEmployee.profile = Perfil
+							? Perfil
+							: existingEmployee.profile;
 
 						if (Perfil === "Presidente") {
 							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
@@ -161,9 +174,11 @@ export const abmDealers = async (documentBufferData) => {
 							// Validar que la fecha de mandato no sea mayor a la actual
 							if (existingEmployee.presidentMandate) {
 								const today = new Date();
-								const [day, month, year] = existingEmployee.presidentMandate.split("/").map(Number);
+								const [day, month, year] = existingEmployee.presidentMandate
+									.split("/")
+									.map(Number);
 								const mandateDate = new Date(year, month - 1, day);
-					
+
 								if (mandateDate > today) {
 									verificationData.updateErrors.push({
 										type: "Personal",
@@ -173,7 +188,11 @@ export const abmDealers = async (documentBufferData) => {
 									continue; // Salir sin actualizar el registro
 								}
 							}
-						}						
+							// Mantener la fecha existente si el perfil cambia
+							if (!mandatoPresidenteStr || !isValidDate(mandatoPresidenteStr)) {
+								person.Mandato_Presidente = existingEmployee.presidentMandate;
+							}
+						}
 
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
@@ -181,7 +200,6 @@ export const abmDealers = async (documentBufferData) => {
 							verificationData.mailsNOK.push(Mail);
 						}
 						existingEmployee.mail = Mail ? Mail : existingEmployee.mail;
-
 					} else {
 						const newEmployee = {
 							empName: Nombre,
@@ -190,9 +208,14 @@ export const abmDealers = async (documentBufferData) => {
 							mail: Mail,
 							mailOk: "Sin_Verificar",
 							profile: Perfil,
-							isActive: Activo && Activo.trim() !== "" ? (Activo === "SI" ? "SI" : "NO") : "SI",
+							isActive:
+								Activo && Activo.trim() !== ""
+									? Activo === "SI"
+										? "SI"
+										: "NO"
+									: "SI",
 						};
-		
+
 						if (Perfil === "Presidente") {
 							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
 								newEmployee.presidentMandate = mandatoPresidenteStr;
@@ -204,13 +227,13 @@ export const abmDealers = async (documentBufferData) => {
 								});
 							}
 						}
-		
+
 						dealer.employees.push(newEmployee);
 						verificationData.phonesNOK.push(Celular);
 						if (Mail) {
 							verificationData.mailsNOK.push(Mail);
-						}						
-					}	
+						}
+					}
 					await dealer.save();
 				}
 			} catch (error) {
@@ -219,7 +242,7 @@ export const abmDealers = async (documentBufferData) => {
 					type: "Personal",
 					data: person,
 					error: error.message,
-				  });
+				});
 			}
 		}
 

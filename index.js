@@ -40,5 +40,5 @@ app.use("/testing", testingRouter);
 const port = process.env.PORT || 80
 
 app.listen(port, () => {
-	console.log(`Server running at ${process.env.NODE_ENV === 'production' ? 'https://three-2-10-megamoto-campania-whatsapp.onrender.com' : `http://localhost:${port}`}`);
+	console.log(`Server running at ${process.env.NODE_ENV === 'production' ? 'https://three-2-14-camara-ces.onrender.com' : `http://localhost:${port}`}`);
 });
