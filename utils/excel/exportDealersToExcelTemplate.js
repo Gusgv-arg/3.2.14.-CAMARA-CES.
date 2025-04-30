@@ -23,20 +23,23 @@ export const exportDealersToExcelTemplate = async () => {
         const dealersSheet = workbook.getWorksheet('Concesionarios');
         const employeesSheet = workbook.getWorksheet('Personal');
 
-        // Copiar validaciones de datos (listas desplegables) del template
-        const copyDataValidations = (sourceSheet, targetSheet) => {
-            if (sourceSheet?.dataValidations?.model && Array.isArray(sourceSheet.dataValidations.model)) {
-                sourceSheet.dataValidations.model.forEach(validation => {
-                    targetSheet.dataValidations.add(validation);
-                });
-            } else {
-                console.warn(`No se encontraron validaciones de datos en la hoja: ${sourceSheet?.name}`);
-            }
+        // Copiar validaciones de datos desde la fila de encabezado
+        const copyHeaderValidations = (sourceSheet, targetSheet) => {
+            const headerRow = sourceSheet.getRow(1); // Fila de encabezado
+            headerRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                const validation = cell.dataValidation;
+                if (validation) {
+                    console.log(`Copiando validación de la columna ${colNumber}:`, validation);
+                    targetSheet.getColumn(colNumber).eachCell({ includeEmpty: true }, (targetCell) => {
+                        targetCell.dataValidation = JSON.parse(JSON.stringify(validation));
+                    });
+                }
+            });
         };
-        
-        // Llamadas a la función
-        copyDataValidations(workbook.getWorksheet('Concesionarios'), dealersSheet);
-        copyDataValidations(workbook.getWorksheet('Personal'), employeesSheet);
+
+        // Copiar validaciones de encabezado
+        copyHeaderValidations(dealersSheet, dealersSheet);
+        copyHeaderValidations(employeesSheet, employeesSheet);
 
         // Procesar datos de concesionarios
         let dealerRow = 2; // Comenzar desde la fila 2
