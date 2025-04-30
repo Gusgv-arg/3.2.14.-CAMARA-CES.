@@ -25,10 +25,16 @@ export const exportDealersToExcelTemplate = async () => {
 
         // Copiar validaciones de datos (listas desplegables) del template
         const copyDataValidations = (sourceSheet, targetSheet) => {
-            sourceSheet.dataValidations.model.forEach(validation => {
-                targetSheet.dataValidations.add(validation);
-            });
+            if (sourceSheet?.dataValidations?.model && Array.isArray(sourceSheet.dataValidations.model)) {
+                sourceSheet.dataValidations.model.forEach(validation => {
+                    targetSheet.dataValidations.add(validation);
+                });
+            } else {
+                console.warn(`No se encontraron validaciones de datos en la hoja: ${sourceSheet?.name}`);
+            }
         };
+        
+        // Llamadas a la función
         copyDataValidations(workbook.getWorksheet('Concesionarios'), dealersSheet);
         copyDataValidations(workbook.getWorksheet('Personal'), employeesSheet);
 
