@@ -53,8 +53,8 @@ export const processWhatsAppWithApi = async (userMessage) => {
 					// Construir el mensaje con los detalles de los errores
 					const errorsDetails = phonesAndMailsToCheck.updateErrors
 						.map(
-							(error) =>
-								`Tipo de Dato: ${error.type}\nConcesionario: ${JSON.stringify(
+							(error, index) =>
+								`${index + 1}.Tipo de Dato: ${error.type}\nRegistro: ${JSON.stringify(
 									error.data
 								)}\nError: ${error.error}`
 						)

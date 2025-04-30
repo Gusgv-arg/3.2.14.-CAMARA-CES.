@@ -167,7 +167,7 @@ export const abmDealers = async (documentBufferData) => {
 								if (mandateDate > today) {
 									verificationData.updateErrors.push({
 										type: "Personal",
-										data: person,
+										data: `${Concesionario}: ${Código}`,
 										error: `No se puede cambiar el perfil a "${Perfil}" porque el mandato como Presidente es válido hasta ${existingEmployee.presidentMandate}`,
 									});
 									continue; // Salir sin actualizar el registro
