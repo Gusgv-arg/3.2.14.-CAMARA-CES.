@@ -23,16 +23,22 @@ export const exportDealersToExcelTemplate = async () => {
         const dealersSheet = workbook.getWorksheet('Concesionarios');
         const employeesSheet = workbook.getWorksheet('Personal');
 
+        // Verificar que las hojas existen
+        if (!dealersSheet || !employeesSheet) {
+            throw new Error("No se encontraron las hojas 'Concesionarios' o 'Personal' en la plantilla.");
+        }
+
         // Copiar validaciones de datos desde la fila de encabezado
         const copyHeaderValidations = (sourceSheet, targetSheet) => {
             const headerRow = sourceSheet.getRow(1); // Fila de encabezado
             headerRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                const validation = cell.dataValidation;
-                if (validation) {
-                    console.log(`Copiando validación de la columna ${colNumber}:`, validation);
+                if (cell && cell.dataValidation) {
+                    console.log(`Copiando validación de la columna ${colNumber}:`, cell.dataValidation);
                     targetSheet.getColumn(colNumber).eachCell({ includeEmpty: true }, (targetCell) => {
-                        targetCell.dataValidation = JSON.parse(JSON.stringify(validation));
+                        targetCell.dataValidation = { ...cell.dataValidation }; // Copiar validación
                     });
+                } else {
+                    console.warn(`No se encontró validación en la columna ${colNumber}`);
                 }
             });
         };
@@ -47,13 +53,11 @@ export const exportDealersToExcelTemplate = async () => {
             if (dealer.isActive) {
                 dealersSheet.getCell(`A${dealerRow}`).value = dealer.brand;
                 dealersSheet.getCell(`B${dealerRow}`).value = dealer.name;
-                // Configurar formato numérico para código
                 const codeCell = dealersSheet.getCell(`C${dealerRow}`);
                 codeCell.value = Number(dealer.code);
                 codeCell.numFmt = '0';
                 dealersSheet.getCell(`D${dealerRow}`).value = dealer.province;
                 dealersSheet.getCell(`E${dealerRow}`).value = dealer.address;
-                // Configurar formato numérico para CUIT
                 const cuitCell = dealersSheet.getCell(`F${dealerRow}`);
                 cuitCell.value = Number(dealer.cuit);
                 cuitCell.numFmt = '0';
@@ -68,36 +72,23 @@ export const exportDealersToExcelTemplate = async () => {
             if (dealer.isActive && dealer.employees) {
                 dealer.employees.forEach(employee => {
                     if (employee.isActive) {
-                        // Datos del concesionario
                         employeesSheet.getCell(`A${employeeRow}`).value = dealer.brand;
                         employeesSheet.getCell(`B${employeeRow}`).value = dealer.name;
-                        
-                        // Configurar formato numérico para código del dealer
                         const dealerCodeCell = employeesSheet.getCell(`C${employeeRow}`);
                         dealerCodeCell.value = Number(dealer.code);
                         dealerCodeCell.numFmt = '0';
-                        
-                        // Datos del empleado
                         employeesSheet.getCell(`D${employeeRow}`).value = employee.empName;
-
-                        // Configurar formato numérico para teléfono
                         const phoneCell = employeesSheet.getCell(`E${employeeRow}`);
                         phoneCell.value = Number(employee.phone);
                         phoneCell.numFmt = '0';
-                        
                         employeesSheet.getCell(`F${employeeRow}`).value = employee.phoneOk;
                         employeesSheet.getCell(`G${employeeRow}`).value = employee.mail;
                         employeesSheet.getCell(`H${employeeRow}`).value = employee.mailOk;
                         employeesSheet.getCell(`I${employeeRow}`).value = employee.profile;
-                        
-                        // Agregar fecha de mandato presidencial si existe
                         if (employee.presidentMandate) {
                             employeesSheet.getCell(`J${employeeRow}`).value = employee.presidentMandate;
-                            /* employeesSheet.getCell(`J${employeeRow}`).value = new Date(employee.presidentMandate);
-                            employeesSheet.getCell(`J${employeeRow}`).numFmt = 'dd/mm/yyyy'; */
                         }
                         employeesSheet.getCell(`K${employeeRow}`).value = employee.isActive;
-                        
                         employeeRow++;
                     }
                 });
@@ -119,7 +110,7 @@ export const exportDealersToExcelTemplate = async () => {
     } catch (error) {
         const errorMessage = error?.response?.data
             ? JSON.stringify(error.response.data)
-            : error.message
+            : error.message;
         
         console.error("Error en exportDealersToExcelTemplate.js:", errorMessage);
         throw errorMessage;
