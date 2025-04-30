@@ -74,8 +74,9 @@ export const exportDealersToExcelTemplate = async () => {
                         
                         // Agregar fecha de mandato presidencial si existe
                         if (employee.presidentMandate) {
-                            employeesSheet.getCell(`J${employeeRow}`).value = new Date(employee.presidentMandate);
-                            employeesSheet.getCell(`J${employeeRow}`).numFmt = 'dd/mm/yyyy';
+                            employeesSheet.getCell(`J${employeeRow}`).value = employee.presidentMandate;
+                            /* employeesSheet.getCell(`J${employeeRow}`).value = new Date(employee.presidentMandate);
+                            employeesSheet.getCell(`J${employeeRow}`).numFmt = 'dd/mm/yyyy'; */
                         }
                         employeesSheet.getCell(`K${employeeRow}`).value = employee.isActive;
                         
