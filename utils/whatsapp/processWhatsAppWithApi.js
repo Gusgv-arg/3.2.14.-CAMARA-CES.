@@ -19,7 +19,7 @@ export const processWhatsAppWithApi = async (userMessage) => {
 	try {
 		// Si es el ADMIN
 		if (userMessage.userPhone === adminPhone) {
-			console.log("detecte el admin phone");
+			console.log("Detectó el Admin phone");
 			if (userMessage.type !== "document") {
 				// Avizar al Admin que entre en su celular
 				message = `🔔 *Notificación:*\n\n☰ ¡👋 Hola Administrador! Por favor entre en su celular para ver el Menú de Opciones.\n\n*Cámara de Concesionarios Stellantis*`;

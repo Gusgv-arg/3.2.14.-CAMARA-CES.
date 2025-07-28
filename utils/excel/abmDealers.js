@@ -72,7 +72,7 @@ export const abmDealers = async (documentBufferData) => {
 				// Buscar el concesionario en la base de datos x marca y código
 				let existingDealer = await Dealers.findOne({
 					brand: Marca,
-					code: Código,
+					code: Código || 0,
 				});
 
 				if (existingDealer) {
@@ -94,7 +94,7 @@ export const abmDealers = async (documentBufferData) => {
 					existingDealer = new Dealers({
 						brand: Marca,
 						name: Concesionario,
-						code: Código,
+						code: Código || 0,
 						province: Provincia,
 						address: Domicilio,
 						cuit: Cuit,
@@ -142,7 +142,7 @@ export const abmDealers = async (documentBufferData) => {
 				// Buscar el concesionario correspondiente
 				const dealer = await Dealers.findOne({
 					brand: Marca,
-					code: Código,
+					code: Código || 0,
 				});
 
 				if (dealer) {
