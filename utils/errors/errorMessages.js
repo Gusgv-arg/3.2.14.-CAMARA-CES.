@@ -1,4 +1,4 @@
-const myPhone = process.env.MY_PHONE
+const myPhone = process.env.ADMIN_PHONE
 
 export const errorMessage1 = `🔔 *Notificación de Error:*\nTe pedimos disculpas 🙏, en este momento no podemos procesar tu solicitud porque estamos haciendo mejoras en nuestro servicio. Podes intentar más tarde o comunicate al ${myPhone}.\n\n*Cámara Concesionarios Stellantis*`
 

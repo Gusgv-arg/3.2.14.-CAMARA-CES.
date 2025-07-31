@@ -7,6 +7,7 @@ import { sendFlow_2ToDealer } from "../../flows/sendFlow_2ToDealer.js";
 import { getMediaWhatsappUrl } from "../media/getMediaWhatsappUrl.js";
 import { downloadWhatsAppMedia } from "../media/downloadWhatsAppMedia.js";
 import { abmDealers } from "../excel/abmDealers.js";
+import { validateWhatsAppNumber } from "./validateWhatsAppNumber.js";
 
 dotenv.config();
 const adminPhone = process.env.ADMIN_PHONE;
@@ -67,8 +68,14 @@ export const processWhatsAppWithApi = async (userMessage) => {
 
 				await handleWhatsappMessage(userMessage.userPhone, message);
 
-				// Llamar a la función que verifica los teléfonos y correos
+				// Llamar a la función que verifica los teléfonos enviando un mensaje
+				const phonesToCheck = phonesAndMailsToCheck.phonesNOK;
 
+				const chequedPhones = await validateWhatsAppNumber(phonesToCheck);
+
+				// Grabar en la BD los resultados de la verificación de WAB
+
+				// Llamar a la función que verifica los correos
 				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.2-Notificación al Admin: ${message}`;
 			}
 		} else {

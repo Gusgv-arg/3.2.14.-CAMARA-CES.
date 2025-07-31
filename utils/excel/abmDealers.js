@@ -59,45 +59,52 @@ export const abmDealers = async (documentBufferData) => {
 		// Procesar los concesionarios
 		for (const dealer of dealersData) {
 			const {
-				Marca,
-				Concesionario,
-				Código,
-				Provincia,
-				Domicilio,
-				Cuit,
+				Razón_Social,
+				Forma_Jurídica,
+				Nombre_Grupo,
+				Nombre_Fantasía,
+				Fiat,
+				Peugeot,
+				Citroen,
+				Jeep_Ram,
 				Activo,
 			} = dealer;
 
 			try {
 				// Buscar el concesionario en la base de datos x marca y código
 				let existingDealer = await Dealers.findOne({
-					name: Concesionario,
-					code: Código || 0,
+					name: Razón_Social,
 				});
 
 				if (existingDealer) {
 					// Actualizar concesionario existente
-					existingDealer.name = Concesionario
-						? Concesionario
+					existingDealer.name = Razón_Social
+						? Razón_Social
 						: existingDealer.name;
-					existingDealer.province = Provincia
-						? Provincia
-						: existingDealer.province;
-					existingDealer.address = Domicilio
-						? Domicilio
-						: existingDealer.address;
-					existingDealer.cuit = Cuit ? Cuit : existingDealer.cuit;
+					existingDealer.legal_form = Forma_Jurídica
+						? Forma_Jurídica
+						: existingDealer.legal_form;
+					existingDealer.group_name = Nombre_Grupo
+						? Nombre_Grupo
+						: existingDealer.group_name;
+					existingDealer.fantasy_name = Nombre_Fantasía
+						? Nombre_Fantasía
+						: existingDealer.fantasy_name;
+					existingDealer.fiat = Fiat ? Fiat : existingDealer.fiat;
+					existingDealer.peugeot = Peugeot ? Peugeot : existingDealer.peugeot;
+					existingDealer.citroen = Citroen ? Citroen : existingDealer.citroen;
+					existingDealer.jeep_ram = Jeep_Ram
+						? Jeep_Ram
+						: existingDealer.jeep_ram;
 					existingDealer.isActive = Activo === "SI" ? "SI" : "NO";
 					await existingDealer.save();
 				} else {
 					// Crear un nuevo concesionario
 					existingDealer = new Dealers({
-						brand: Marca,
-						name: Concesionario,
-						code: Código || 0,
-						province: Provincia,
-						address: Domicilio,
-						cuit: Cuit,
+						name: Razón_Social,
+						legal_form: Forma_Jurídica || "S.A.",
+						group_name: Nombre_Grupo || "",
+						fantasy_name: Nombre_Fantasía || "",
 						isActive:
 							Activo && Activo.trim() !== ""
 								? Activo === "SI"
@@ -121,12 +128,16 @@ export const abmDealers = async (documentBufferData) => {
 		// Procesar el personal
 		for (const person of personalData) {
 			const {
-				Marca,
-				Concesionario,
-				Código,
+				Razón_Social,
+				Fiat,
+				Peugeot,
+				Citroen,
+				Jeep_Ram,
 				Nombre,
 				Celular,
+				Celular_OK,
 				Mail,
+				Mail_OK,
 				Perfil,
 				Mandato_Presidente,
 				Activo,
@@ -141,8 +152,7 @@ export const abmDealers = async (documentBufferData) => {
 			try {
 				// Buscar el concesionario correspondiente
 				const dealer = await Dealers.findOne({
-					name: Concesionario,
-					code: Código || 0,
+					name: Razón_Social					
 				});
 
 				if (dealer) {

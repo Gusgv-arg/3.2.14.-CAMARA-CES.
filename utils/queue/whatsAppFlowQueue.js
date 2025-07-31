@@ -3,7 +3,7 @@ import { processWhatsAppFlowWithApi } from "../whatsapp/processWhatsAppFlowWithA
 import { errorMessage1 } from "../errors/errorMessages.js";
 import { handleWhatsappMessage } from "../whatsapp/handleWhatsappMessage.js";
 
-const myPhone = process.env.MY_PHONE;
+const adminPhone = process.env.ADMIN_PHONE;
 
 // Class definition for the Queue
 export class WhatsAppFlowMessageQueue {
@@ -56,7 +56,7 @@ export class WhatsAppFlowMessageQueue {
 				// Send WhatsApp error message to Admin
 				const message = `🔔 *NOTIFICACION DE ERROR AL ADMIN en whatsAppFlowQueue.js:*\nLead ${userMessage.name} Cel. ${userMessage.userPhone}.\nError: ${errorMessage}.`;
 
-				await adminWhatsAppNotification(myPhone, message);
+				await adminWhatsAppNotification(adminPhone, message);
 			}
 		}
 		// Change flag to allow next message processing

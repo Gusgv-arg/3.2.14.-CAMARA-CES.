@@ -1,44 +1,82 @@
-import axios from 'axios';
-//import dotenv from 'dotenv';
-import * as dotenv from 'dotenv'
+import axios from "axios";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-dotenv.config();
-// ⚙️ Configuración
-const token = process.env.WHATSAPP_TOKEN; // Token de acceso a la API de WhatsApp Business
-const phoneNumberId = process.env.WHATSAPP_PHONE_ID // No es el número en sí, es el ID
-const numeroAConsultar = '5491161405589'; // Número que querés validar (formato internacional)
-console.log("token",token)
-// 📞 Llamada al endpoint de validación
-async function validarNumeroWhatsApp() {
-  try {
-    const url = `https://graph.facebook.com/v17.0/${phoneNumberId}/contacts`;
+// Get the directory path of the current module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-    const response = await axios.post(
-      url,
-      {
-        blocking: 'wait',
-        contacts: [numeroAConsultar]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+// Load .env from project root
+dotenv.config({ path: join(__dirname, "../../.env") });
 
-    const resultado = response.data.contacts[0];
-    console.log('✅ Resultado:', resultado);
+const whatsAppToken = process.env.WHATSAPP_TOKEN;
+const phoneNumberId = process.env.WHATSAPP_PHONE_ID;
+//const phonesToCheck = ["5491161405589", "5491139023969"];
+//const phonesToCheck = ["5491161405589"];
+const checkedPhones = [];
 
-    if (resultado.status === 'valid') {
-      console.log(`✅ El número ${resultado.input} tiene WhatsApp. wa_id: ${resultado.wa_id}`);
-    } else {
-      console.log(`❌ El número ${resultado.input} NO tiene WhatsApp.`);
-    }
+export const validateWhatsAppNumber = async (phonesToCheck) => {
+	for (const number of phonesToCheck) {
+		try {
+			const url = `https://graph.facebook.com/v20.0/${phoneNumberId}/messages?access_token=${whatsAppToken}`;
 
-  } catch (error) {
-    console.error('❌ Error en la consulta:', error.response?.data || error.message);
-  }
-}
+			// Payload para mandar un texto, sin template
+			/* const data = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: number,
+        type: "text",
+        text: {
+          preview_url: true,
+          body: "Usted fue dado de alta en el sistema de WhatsApp de la Cámara STELLANTIS.",
+        },
+      }; */
 
-validarNumeroWhatsApp();
+			// Payload para mandar un template
+			 const data = {
+				messaging_product: "whatsapp",
+				recipient_type: "individual",
+				to: number,
+				type: "template",
+				template: {
+					name: "camara_bienvenida",
+					language: { code: "es" },
+					//components: components,
+				},
+			};
+			const response = await axios.post(url, data, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			//const resultado = response.data.contacts[0];
+			const resultado = response.data;
+			console.log('✅ Resultado:', resultado);
+
+			if (resultado.messages[0].message_status === "accepted") {
+				//console.log(`✅ El número ${resultado.input} tiene un WhatsApp válido.`);
+				checkedPhones.push({
+					phone: resultado.contacts[0].input,
+					phoneOk: "OK",
+				});
+			} else {
+				//console.log(`❌ El número ${resultado.input} NO tiene WhatsApp.`);
+				checkedPhones.push({
+					phone: resultado.contacts[0].input,
+					phoneOk: "NOK",
+				});
+			}
+		} catch (error) {
+			console.error(
+				"❌ Error en la consulta:",
+				error.response?.data || error.message
+			);
+		}
+	}
+	console.log("✅ Verificación WhatsApp:", checkedPhones);
+	return checkedPhones;
+};
+
+//validateWhatsAppNumber(phonesToCheck);

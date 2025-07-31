@@ -6,7 +6,7 @@ import { handleWhatsappMessage } from "../whatsapp/handleWhatsappMessage.js";
 import { adminWhatsAppNotification } from "../notifications/adminWhatsAppNotification.js";
 import { processWhatsAppWithApi } from "../whatsapp/processWhatsAppWithApi.js";
 
-const myPhone = process.env.MY_PHONE;
+const adminPhone = process.env.ADMIN_PHONE;
 
 // Class definition for the Queue
 export class WhatsAppMessageQueue {
@@ -76,7 +76,7 @@ export class WhatsAppMessageQueue {
 				// Send WhatsApp error message to Admin
 				const message = `🔔 *NOTIFICACION DE ERROR AL ADMIN:*\nFunción: whatsAppQueue.js\nRegistro de la Queue: ${newMessage}\nError:${errorMessage}`;
 
-				await adminWhatsAppNotification(myPhone, message);
+				await adminWhatsAppNotification(adminPhone, message);
 			}
 		}
 		// Change flag to allow next message processing
