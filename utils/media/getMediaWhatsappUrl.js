@@ -12,7 +12,7 @@ export const getMediaWhatsappUrl = async (mediaId) => {
 				Authorization: `Bearer ${whatsappToken}`,
 			},
 		});
-		console.log("Media URL en getMediaWhatsappUrl", mediaUrl);
+		//console.log("Media URL en getMediaWhatsappUrl", mediaUrl);
 		return mediaUrl;
 	} catch (error) {
 		console.log("Error en getMediaWhatsappUrl", error.message);

@@ -47,10 +47,10 @@ export const abmDealers = async (documentBufferData) => {
 		const dealersData = xlsx.utils.sheet_to_json(dealersSheet);
 		const personalData = xlsx.utils.sheet_to_json(personalSheet);
 
-		console.log("personalData", personalData);
+		//console.log("personalData", personalData);
 
 		// Objeto para almacenar los teléfonos y correos con estado "NOK"
-		const verificationData = {
+		let verificationData = {
 			phonesNOK: [],
 			mailsNOK: [],
 			updateErrors: [],
@@ -90,21 +90,30 @@ export const abmDealers = async (documentBufferData) => {
 					existingDealer.fantasy_name = Nombre_Fantasía
 						? Nombre_Fantasía
 						: existingDealer.fantasy_name;
-					existingDealer.fiat = Fiat ? Fiat : existingDealer.fiat;
-					existingDealer.peugeot = Peugeot ? Peugeot : existingDealer.peugeot;
-					existingDealer.citroen = Citroen ? Citroen : existingDealer.citroen;
-					existingDealer.jeep_ram = Jeep_Ram
-						? Jeep_Ram
-						: existingDealer.jeep_ram;
+
+					// Actualizar marcas como array
+					const brands = [];
+					if (Fiat === "SI") brands.push("Fiat");
+					if (Peugeot === "SI") brands.push("Peugeot");
+					if (Citroen === "SI") brands.push("Citroen");
+					if (Jeep_Ram === "SI") brands.push("Jeep_Ram");
+					existingDealer.brands = brands;
 					existingDealer.isActive = Activo === "SI" ? "SI" : "NO";
 					await existingDealer.save();
 				} else {
 					// Crear un nuevo concesionario
+					const brands = [];
+					if (Fiat === "SI") brands.push("Fiat");
+					if (Peugeot === "SI") brands.push("Peugeot");
+					if (Citroen === "SI") brands.push("Citroen");
+					if (Jeep_Ram === "SI") brands.push("Jeep_Ram");
+
 					existingDealer = new Dealers({
 						name: Razón_Social,
 						legal_form: Forma_Jurídica || "S.A.",
 						group_name: Nombre_Grupo || "",
 						fantasy_name: Nombre_Fantasía || "",
+						brands: brands,
 						isActive:
 							Activo && Activo.trim() !== ""
 								? Activo === "SI"
@@ -152,7 +161,7 @@ export const abmDealers = async (documentBufferData) => {
 			try {
 				// Buscar el concesionario correspondiente
 				const dealer = await Dealers.findOne({
-					name: Razón_Social					
+					name: Razón_Social,
 				});
 
 				if (dealer) {
@@ -169,6 +178,24 @@ export const abmDealers = async (documentBufferData) => {
 						existingEmployee.profile = Perfil
 							? Perfil
 							: existingEmployee.profile;
+
+						// Actualizar marcas del empleado
+						let brands = [];
+						if (
+							Perfil === "accionista_sa" ||
+							Perfil === "presidente_sa" ||
+							Perfil === "socio_srl" ||
+							Perfil === "socio_gerente_srl"
+						) {
+							brands = dealer.brands; // Mantener las marcas del ce.
+							existingEmployee.brands = brands;
+						} else {
+							if (Fiat === "SI") brands.push("Fiat");
+							if (Peugeot === "SI") brands.push("Peugeot");
+							if (Citroen === "SI") brands.push("Citroen");
+							if (Jeep_Ram === "SI") brands.push("Jeep_Ram");
+							existingEmployee.brands = brands;
+						}
 
 						if (Perfil === "Presidente") {
 							if (mandatoPresidenteStr && isValidDate(mandatoPresidenteStr)) {
@@ -211,6 +238,21 @@ export const abmDealers = async (documentBufferData) => {
 						}
 						existingEmployee.mail = Mail ? Mail : existingEmployee.mail;
 					} else {
+						let brands = [];
+						if (
+							Perfil === "accionista_sa" ||
+							Perfil === "presidente_sa" ||
+							Perfil === "socio_srl" ||
+							Perfil === "socio_gerente_srl"
+						) {
+							brands = dealer.brands; // Mantener las marcas del ce.
+						} else {
+							if (Fiat === "SI") brands.push("Fiat");
+							if (Peugeot === "SI") brands.push("Peugeot");
+							if (Citroen === "SI") brands.push("Citroen");
+							if (Jeep_Ram === "SI") brands.push("Jeep_Ram");
+						}
+
 						const newEmployee = {
 							empName: Nombre,
 							phone: Celular,
@@ -218,6 +260,7 @@ export const abmDealers = async (documentBufferData) => {
 							mail: Mail,
 							mailOk: "Sin_Verificar",
 							profile: Perfil,
+							brands: brands,
 							isActive:
 								Activo && Activo.trim() !== ""
 									? Activo === "SI"
@@ -256,7 +299,7 @@ export const abmDealers = async (documentBufferData) => {
 			}
 		}
 
-		console.log("Procesamiento ABM Dealers completado.");
+		console.log("ABM Dealers completado. A verificar:", verificationData);
 		return verificationData;
 	} catch (error) {
 		console.error("Error en abmDealers:", error.message);

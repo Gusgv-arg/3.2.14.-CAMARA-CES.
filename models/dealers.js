@@ -27,6 +27,10 @@ const documentSchema = new mongoose.Schema({
 
 const employeeSchema = new mongoose.Schema({
 	empName: String,
+	brands: [{
+        type: String,
+        enum: ["Fiat", "Peugeot", "Citroen", "Jeep_Ram"]
+    }],
 	profile: {
 		type: String,
 		enum: [
@@ -85,30 +89,10 @@ const dealerSchema = new mongoose.Schema({
 	},
 	group_name: String,
 	fantasy_name: String,	
-	fiat: {
-		type: String,
-		required: true,
-		enum: ["SI", "NO"],
-		default: "NO"
-	},
-	peugeot: {
-		type: String,
-		required: true,
-		enum: ["SI", "NO"],
-		default: "NO"
-	},
-	citroen: {
-		type: String,
-		required: true,
-		enum: ["SI", "NO"],
-		default: "NO"
-	},
-	jeep_ram: {
-		type: String,
-		required: true,
-		enum: ["SI", "NO"],
-		default: "NO"
-	},
+	brands: [{
+        type: String,
+        enum: ["Fiat", "Peugeot", "Citroen", "Jeep_Ram"]
+    }],	
 	isActive: { type: String, enum: ["SI", "NO"], default: "SI", required: true },
 	employees: [employeeSchema],
 });

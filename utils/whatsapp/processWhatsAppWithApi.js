@@ -73,6 +73,19 @@ export const processWhatsAppWithApi = async (userMessage) => {
 
 				const chequedPhones = await validateWhatsAppNumber(phonesToCheck);
 
+				// Crear mensaje formateado con los resultados
+				let phoneResults = "";
+				chequedPhones.forEach(({ phone, phoneOk }) => {
+					phoneResults += `📱 *${phone}*: ${
+						phoneOk === "OK" ? "✅ OK" : "❌ NOK"
+					}\n`;
+				});
+
+				// Enviar mensaje al Admin con los resultados de la verificación de teléfonos
+				message = `🔔 *Notificación:*\n\n📋 Resultados de la verificación de teléfonos:\n${phoneResults}`;
+
+				await handleWhatsappMessage(userMessage.userPhone, message);
+
 				// Grabar en la BD los resultados de la verificación de WAB
 
 				// Llamar a la función que verifica los correos
