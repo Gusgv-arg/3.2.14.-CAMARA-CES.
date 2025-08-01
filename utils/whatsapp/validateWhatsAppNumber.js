@@ -16,7 +16,10 @@ const phoneNumberId = process.env.WHATSAPP_PHONE_ID;
 //const phonesToCheck = ["5491161405589"];
 const checkedPhones = [];
 
+// Función que recibe un array de objetos con las propiedades "nombre" y "celular"
 export const validateWhatsAppNumber = async (phonesToCheck) => {
+	
+	console.log("Números de WhatsApp desde validateWhatsAppNumer.js:", phonesToCheck);
 	for (const number of phonesToCheck) {
 		try {
 			const url = `https://graph.facebook.com/v20.0/${phoneNumberId}/messages?access_token=${whatsAppToken}`;
@@ -37,7 +40,7 @@ export const validateWhatsAppNumber = async (phonesToCheck) => {
 			 const data = {
 				messaging_product: "whatsapp",
 				recipient_type: "individual",
-				to: number,
+				to: number.celular,
 				type: "template",
 				template: {
 					name: "camara_bienvenida",
@@ -58,12 +61,14 @@ export const validateWhatsAppNumber = async (phonesToCheck) => {
 			if (resultado.messages[0].message_status === "accepted") {
 				//console.log(`✅ El número ${resultado.input} tiene un WhatsApp válido.`);
 				checkedPhones.push({
+					name: number.nombre,
 					phone: resultado.contacts[0].input,
 					phoneOk: "OK",
 				});
 			} else {
 				//console.log(`❌ El número ${resultado.input} NO tiene WhatsApp.`);
 				checkedPhones.push({
+					name: number.nombre,
 					phone: resultado.contacts[0].input,
 					phoneOk: "NOK",
 				});
@@ -73,6 +78,11 @@ export const validateWhatsAppNumber = async (phonesToCheck) => {
 				"❌ Error en la consulta:",
 				error.response?.data || error.message
 			);
+			checkedPhones.push({
+                name: number.nombre,
+                phone: number.celular,
+                phoneOk: "Error en la verificación"
+            });
 		}
 	}
 	console.log("✅ Verificación WhatsApp:", checkedPhones);

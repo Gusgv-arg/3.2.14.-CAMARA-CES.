@@ -8,6 +8,7 @@ import { getMediaWhatsappUrl } from "../media/getMediaWhatsappUrl.js";
 import { downloadWhatsAppMedia } from "../media/downloadWhatsAppMedia.js";
 import { abmDealers } from "../excel/abmDealers.js";
 import { validateWhatsAppNumber } from "./validateWhatsAppNumber.js";
+import { updatePhoneStatus } from "../dataBase/updatePhoneStatus.js";
 
 dotenv.config();
 const adminPhone = process.env.ADMIN_PHONE;
@@ -33,6 +34,7 @@ export const processWhatsAppWithApi = async (userMessage) => {
 				// Agrego el wamId al objeto userMessage para traquear status FLOW1
 				userMessage.wamId_Flow1 = wamId_Flow1;
 				log = `1-Se envió el Flow1 al Administrador.`;
+			
 			} else if (userMessage.type === "document") {
 				// Opción de ABM Concesionarios / personal
 				console.log("entre al if de document del Admin");
@@ -75,22 +77,27 @@ export const processWhatsAppWithApi = async (userMessage) => {
 
 				// Crear mensaje formateado con los resultados
 				let phoneResults = "";
-				chequedPhones.forEach(({ phone, phoneOk }) => {
-					phoneResults += `📱 *${phone}*: ${
+				chequedPhones.forEach(({ name, phone, phoneOk }) => {
+					phoneResults += `Nombre: ${name} - 📱 ${phone}: ${
 						phoneOk === "OK" ? "✅ OK" : "❌ NOK"
 					}\n`;
 				});
 
 				// Enviar mensaje al Admin con los resultados de la verificación de teléfonos
-				message = `🔔 *Notificación:*\n\n📋 Resultados de la verificación de teléfonos:\n${phoneResults}`;
+				message = `🔔 *Notificación:*\n\nResultados de la verificación de teléfonos:\n${phoneResults}`;
 
 				await handleWhatsappMessage(userMessage.userPhone, message);
 
 				// Grabar en la BD los resultados de la verificación de WAB
-
+				await updatePhoneStatus(chequedPhones);
+				
 				// Llamar a la función que verifica los correos
+
+				// Grabar en la BD los resultados de la verificación de correos
+				
 				log = `1-Se procesó el Excel de ABM de Concesionarios y Personal.2-Notificación al Admin: ${message}`;
 			}
+		
 		} else {
 			// NO es el ADMIN, busca en la Base de Concesionarios
 			const dealer = await Dealers.findOne({

@@ -57,14 +57,14 @@ const employeeSchema = new mongoose.Schema({
 	phone: String,
 	phoneOk: {
 		type: String,
-		enum: ["OK", "NOK", "Sin_Verificar"],
+		enum: ["OK", "NOK", "Sin_Verificar", "Error en la verificación"],
 		default: "Sin_Verificar",
 		required: true,
 	},
 	mail: String,
 	mailOk: {
 		type: String,
-		enum: ["OK", "NOK", "Sin_Verificar"],
+		enum: ["OK", "NOK", "Sin_Verificar", "Error en la verificación"],
 		default: "Sin_Verificar",
 		required: true,
 	},

@@ -219,8 +219,8 @@ export const abmDealers = async (documentBufferData) => {
 								if (mandateDate > today) {
 									verificationData.updateErrors.push({
 										type: "Personal",
-										data: `${Concesionario}: ${Código}`,
-										error: `No se puede cambiar el perfil a "${Perfil}" porque el mandato como Presidente es válido hasta ${existingEmployee.presidentMandate}`,
+										data: `${Razón_Social}`,
+										error: `No se puede cambiar el perfil a "${Nombre}" porque el mandato como Presidente es válido hasta ${existingEmployee.presidentMandate}`,
 									});
 									continue; // Salir sin actualizar el registro
 								}
@@ -234,7 +234,7 @@ export const abmDealers = async (documentBufferData) => {
 						existingEmployee.isActive = Activo === "SI" ? "SI" : "NO";
 						if (existingEmployee.mail !== Mail) {
 							existingEmployee.mailOk = "Sin_Verificar"; // Cambiar el estado del mail a NOK si es diferente
-							verificationData.mailsNOK.push(Mail);
+							verificationData.mailsNOK.push({ nombre: Nombre, mail: Mail });
 						}
 						existingEmployee.mail = Mail ? Mail : existingEmployee.mail;
 					} else {
@@ -282,9 +282,9 @@ export const abmDealers = async (documentBufferData) => {
 						}
 
 						dealer.employees.push(newEmployee);
-						verificationData.phonesNOK.push(Celular);
+						verificationData.phonesNOK.push({nombre: Nombre, celular: Celular});
 						if (Mail) {
-							verificationData.mailsNOK.push(Mail);
+							verificationData.mailsNOK.push({nombre: Nombre, mail: Mail});
 						}
 					}
 					await dealer.save();
