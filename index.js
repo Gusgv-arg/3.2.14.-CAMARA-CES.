@@ -7,6 +7,7 @@ import testingRouter from "./routers/testingRouter.js";
 import whatsappRouter from "./routers/whatsappRouter.js";
 import path from 'path';
 import { fileURLToPath } from "url";
+import validarRouter from "./routers/validarRouter.js";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use(morgan("dev"));
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use("/webhook", whatsappRouter);
+app.use("/validar_whatsapp", validarRouter);
 app.use("/testing", testingRouter);
 
 const port = process.env.PORT || 80

@@ -14,10 +14,10 @@ const whatsAppToken = process.env.WHATSAPP_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_ID;
 //const phonesToCheck = ["5491161405589", "5491139023969"];
 //const phonesToCheck = ["5491161405589"];
-const checkedPhones = [];
 
 // Función que recibe un array de objetos con las propiedades "nombre" y "celular"
 export const validateWhatsAppNumber = async (phonesToCheck) => {
+	let checkedPhones = [];
 	
 	console.log("Números de WhatsApp desde validateWhatsAppNumer.js:", phonesToCheck);
 	for (const number of phonesToCheck) {

@@ -1,0 +1,13 @@
+{
+   "servers": {
+      "MongoDB": {
+         "command": "mongodb-mcp-server",
+         "args": [
+            "--uri", "${env:MONGODB_URI}",
+            "--clientId", "${env:MDB_MCP_API_CLIENT_ID}",
+            "--clientSecret", "${env:MDB_MCP_API_CLIENT_SECRET}"
+         ],
+         "envFile": "${workspaceFolder}/.env"
+      }
+   }
+}
